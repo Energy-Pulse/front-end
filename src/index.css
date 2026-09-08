@@ -1,0 +1,233 @@
+@import "tailwindcss";
+
+/* Google Material Symbols */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: #ffffff;
+  color: #111111;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f4f4f5;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #d4d4d8;
+  border-radius: 2px;
+}
+
+/* Animation utilities for modals */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-in {
+  animation: fade-in 0.2s ease-out;
+}
+
+/* Custom theme colors */
+@theme {
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f6f3f2;
+  --color-surface-container: #f0edec;
+  --color-surface-container-high: #ebe7e7;
+  --color-surface-container-highest: #e5e2e1;
+  --color-on-primary: #ffffff;
+  --color-on-surface: #1c1b1b;
+  --color-on-surface-variant: #47464b;
+  --color-primary: #000000;
+  --color-primary-container: #1b1b1e;
+  --color-on-primary-container: #858387;
+  --color-secondary: #5d5e66;
+  --color-secondary-container: #e3e1ec;
+  --color-on-secondary-container: #63646c;
+  --color-outline: #77767b;
+  --color-outline-variant: #c8c5cb;
+  --color-background: #fcf9f8;
+  --color-on-background: #1c1b1b;
+  --color-surface: #fcf9f8;
+  --color-surface-dim: #dcd9d9;
+  --color-surface-bright: #fcf9f8;
+  --color-inverse-surface: #313030;
+  --color-inverse-on-surface: #f3f0ef;
+  --color-inverse-primary: #c8c5ca;
+  --color-surface-tint: #5f5e61;
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+  --color-primary-fixed: #e4e1e6;
+  --color-primary-fixed-dim: #c8c5ca;
+  --color-on-primary-fixed: #1b1b1e;
+  --color-on-primary-fixed-variant: #47464a;
+  --color-secondary-fixed: #e3e1ec;
+  --color-secondary-fixed-dim: #c6c5cf;
+  --color-on-secondary-fixed: #1a1b22;
+  --color-on-secondary-fixed-variant: #46464e;
+  --color-tertiary: #000000;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #1d1b16;
+  --color-on-tertiary-container: #88837c;
+  --color-tertiary-fixed: #e8e2d9;
+  --color-tertiary-fixed-dim: #cbc6bd;
+  --color-on-tertiary-fixed: #1d1b16;
+  --color-on-tertiary-fixed-variant: #494640;
+  --color-surface-variant: #e5e2e1;
+}
+
+/* Font utilities */
+.font-display-kpi {
+  font-family: Inter;
+  font-size: 48px;
+  line-height: 52px;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+}
+
+.font-headline-lg {
+  font-family: Inter;
+  font-size: 32px;
+  line-height: 40px;
+  letter-spacing: -0.025em;
+  font-weight: 600;
+}
+
+.font-headline-md {
+  font-family: Inter;
+  font-size: 24px;
+  line-height: 32px;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+}
+
+.font-headline-sm {
+  font-family: Inter;
+  font-size: 18px;
+  line-height: 26px;
+  letter-spacing: -0.015em;
+  font-weight: 600;
+}
+
+.font-body-lg {
+  font-family: Inter;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: -0.01em;
+  font-weight: 400;
+}
+
+.font-body-md {
+  font-family: Inter;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.005em;
+  font-weight: 400;
+}
+
+.font-body-sm {
+  font-family: Inter;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0em;
+  font-weight: 400;
+}
+
+.font-label-md {
+  font-family: Inter;
+  font-size: 13px;
+  line-height: 18px;
+  letter-spacing: -0.005em;
+  font-weight: 500;
+}
+
+.font-label-sm {
+  font-family: Inter;
+  font-size: 11px;
+  line-height: 14px;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+/* Auto-Hiding Inset Scrollbar */
+
+.custom-scrollbar {
+  scrollbar-gutter: stable;
+}
+
+/* WebKit Engines */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Hidden by default */
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  border-radius: 9999px;
+  transition: background-color 0.4s ease;
+}
+
+/* Show when scrolling or directly hovered */
+.custom-scrollbar.is-scrolling::-webkit-scrollbar-thumb,
+.custom-scrollbar:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.25);
+}
+
+.custom-scrollbar.is-scrolling::-webkit-scrollbar-thumb:hover,
+.custom-scrollbar:hover::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.45);
+}
+
+/* Firefox Support */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.4s ease;
+}
+
+.custom-scrollbar.is-scrolling,
+.custom-scrollbar:hover {
+  scrollbar-color: rgba(0, 0, 0, 0.25) transparent;
+}
+
+/* Dark Mode Adjustments */
+@media (prefers-color-scheme: dark) {
+  .custom-scrollbar.is-scrolling::-webkit-scrollbar-thumb,
+  .custom-scrollbar:hover::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.25);
+  }
+
+  .custom-scrollbar.is-scrolling::-webkit-scrollbar-thumb:hover,
+  .custom-scrollbar:hover::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+  }
+
+  .custom-scrollbar.is-scrolling,
+  .custom-scrollbar:hover {
+    scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+  }
+}
