@@ -398,41 +398,6 @@
     }
 }
 
-/* ----- Dark mode support (optional enhancement) ----- */
-@media (prefers-color-scheme: dark) {
-    .glass-effect {
-        background: rgba(28, 27, 27, 0.8);
-        border-color: rgba(255, 255, 255, 0.05);
-    }
-
-    .gradient-text {
-        background: linear-gradient(135deg, #ffffff 0%, #a0a0a0 50%, #ffffff 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-
-    .card-hover::before {
-        background: linear-gradient(135deg, transparent 40%, rgba(255, 255, 255, 0.05) 100%);
-    }
-
-    .table-premium thead th {
-        background: #1c1b1b;
-    }
-
-    ::-webkit-scrollbar-track {
-        background: #1c1b1b;
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background: #3a3a3a;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-        background: #4a4a4a;
-    }
-}
-
 /* ============================================
    PREMIUM BACKGROUND IMAGE WITH OVERLAY
    ============================================ */
@@ -548,103 +513,6 @@
     background-attachment: fixed;
 }
 
-/* --- Dark mode for image backgrounds --- */
-@media (prefers-color-scheme: dark) {
-    .bg-smartenergy-image {
-        background-image:
-                linear-gradient(
-                        135deg,
-                        rgba(28, 27, 27, 0.95) 0%,
-                        rgba(26, 25, 25, 0.92) 50%,
-                        rgba(21, 20, 20, 0.95) 100%
-                ),
-                url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 800"%3E%3Cdefs%3E%3ClinearGradient id="g" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" stop-color="%23ffffff" stop-opacity="0.03"/%3E%3Cstop offset="50%25" stop-color="%235d5e66" stop-opacity="0.02"/%3E%3Cstop offset="100%25" stop-color="%23ffffff" stop-opacity="0.03"/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect fill="url(%23g)" width="1440" height="800"/%3E%3C/svg%3E');
-        background-size: cover;
-        background-position: center center;
-        background-repeat: no-repeat;
-    }
-
-    .bg-smartenergy-unsplash {
-        background-image:
-                linear-gradient(
-                        to bottom,
-                        rgba(28, 27, 27, 0.95) 0%,
-                        rgba(26, 25, 25, 0.92) 30%,
-                        rgba(21, 20, 20, 0.88) 60%,
-                        rgba(28, 27, 27, 0.95) 100%
-                ),
-                url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1920&q=80');
-        background-size: cover;
-        background-position: center center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-    }
-
-    .bg-smartenergy-city {
-        background-image:
-                linear-gradient(
-                        to bottom,
-                        rgba(28, 27, 27, 0.95) 0%,
-                        rgba(26, 25, 25, 0.92) 30%,
-                        rgba(21, 20, 20, 0.88) 60%,
-                        rgba(28, 27, 27, 0.95) 100%
-                ),
-                url('https://images.unsplash.com/photo-1470071459604-7b8ec44ff0b9?w=1920&q=80');
-        background-size: cover;
-        background-position: center center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-    }
-
-    .bg-smartenergy-tech {
-        background-image:
-                linear-gradient(
-                        to bottom,
-                        rgba(28, 27, 27, 0.95) 0%,
-                        rgba(26, 25, 25, 0.92) 30%,
-                        rgba(21, 20, 20, 0.88) 60%,
-                        rgba(28, 27, 27, 0.95) 100%
-                ),
-                url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&q=80');
-        background-size: cover;
-        background-position: center center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-    }
-
-    .bg-smartenergy-clean {
-        background-image:
-                linear-gradient(
-                        to bottom,
-                        rgba(28, 27, 27, 0.95) 0%,
-                        rgba(26, 25, 25, 0.92) 30%,
-                        rgba(21, 20, 20, 0.88) 60%,
-                        rgba(28, 27, 27, 0.95) 100%
-                ),
-                url('https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=1920&q=80');
-        background-size: cover;
-        background-position: center center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-    }
-
-    .bg-smartenergy-energy-overlay {
-        background-image:
-                linear-gradient(
-                        180deg,
-                        rgba(28, 27, 27, 0.95) 0%,
-                        rgba(26, 25, 25, 0.88) 30%,
-                        rgba(21, 20, 20, 0.9) 70%,
-                        rgba(28, 27, 27, 0.95) 100%
-                ),
-                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='0.03' d='M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,218.7C672,235,768,245,864,234.7C960,224,1056,192,1152,181.3C1248,171,1344,181,1392,186.7L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'/%3E%3C/svg%3E"),
-                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        background-size: cover, 100% 200px, 60px 60px;
-        background-position: center, bottom, center;
-        background-repeat: no-repeat, no-repeat, repeat;
-    }
-}
-
 /* --- Smooth scroll offset for anchor links --- */
 .scroll-offset {
     scroll-margin-top: 80px;
@@ -658,12 +526,6 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-@media (prefers-color-scheme: dark) {
-    .glass-image {
-        background: rgba(28, 27, 27, 0.8);
-        border-color: rgba(255, 255, 255, 0.05);
-    }
-}
 /* ============================================
    ANALYTICS & PREDICTIONS ENHANCEMENTS
    Modern UI improvements
@@ -851,52 +713,6 @@
     transform: translateX(4px);
 }
 
-/* --- Dark mode overrides for new styles --- */
-@media (prefers-color-scheme: dark) {
-    .insight-card:hover {
-        background: rgba(255, 255, 255, 0.03);
-    }
-
-    .status-pill.success {
-        background: #052e16;
-        color: #86efac;
-        border-color: #166534;
-    }
-
-    .status-pill.warning {
-        background: #1e1b04;
-        color: #fcd34d;
-        border-color: #78350f;
-    }
-
-    .status-pill.info {
-        background: #0f172a;
-        color: #93c5fd;
-        border-color: #1e3a5f;
-    }
-
-    .confidence-badge.high {
-        background: #052e16;
-        color: #86efac;
-        border-color: #166534;
-    }
-
-    .confidence-badge.medium {
-        background: #1e1b04;
-        color: #fcd34d;
-        border-color: #78350f;
-    }
-
-    .confidence-badge.low {
-        background: #1f0a0a;
-        color: #fca5a5;
-        border-color: #7f1d1d;
-    }
-
-    .performance-bar {
-        background: #2a2a2a;
-    }
-}
 /* ============================================
    MODERN CHART ENHANCEMENTS
    Beautiful chart styling
@@ -1049,16 +865,4 @@
 .kpi-card-modern:hover {
     transform: translateY(-4px);
     box-shadow: 0 12px 40px -12px rgba(0, 0, 0, 0.12);
-}
-
-/* --- Dark mode chart adjustments --- */
-@media (prefers-color-scheme: dark) {
-    .chart-tooltip-modern {
-        background: rgba(20, 20, 20, 0.95);
-        border-color: rgba(255, 255, 255, 0.05);
-    }
-
-    .kpi-card-modern::after {
-        background: linear-gradient(90deg, transparent, #ffffff, transparent);
-    }
 }
