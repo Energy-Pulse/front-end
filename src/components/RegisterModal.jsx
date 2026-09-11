@@ -51,7 +51,7 @@ export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }) => {
         <Modal
             isOpen={isOpen}
             onClose={onClose}
-            className={`max-w-lg max-h-[92vh] overflow-y-auto custom-scrollbar pr-3 ${isScrolling ? 'is-scrolling' : ''}`}
+            className="max-w-lg max-h-[92vh] overflow-y-auto scrollbar-hidden pr-3"
             onScroll={handleScroll}
         >
             <div className="flex items-center gap-2 mb-2">

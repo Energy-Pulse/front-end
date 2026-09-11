@@ -1015,3 +1015,31 @@
     transform: translateY(-4px);
     box-shadow: 0 12px 40px -12px rgba(0, 0, 0, 0.12);
 }
+/* ============================================
+   HIDDEN SCROLLBAR (SCROLLABLE)
+   Hides the visible scrollbar while preserving
+   scroll functionality. Used in modals (e.g.
+   RegisterModal) where the bar should not show.
+   ============================================ */
+
+.scrollbar-hidden {
+    /* Firefox */
+    scrollbar-width: none;
+
+    /* IE / legacy Edge */
+    -ms-overflow-style: none;
+}
+
+/* WebKit (Chrome, Safari, Edge, Opera) */
+.scrollbar-hidden::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+    background: transparent;
+}
+
+.scrollbar-hidden::-webkit-scrollbar-track,
+.scrollbar-hidden::-webkit-scrollbar-thumb {
+    background: transparent;
+    border: none;
+}
