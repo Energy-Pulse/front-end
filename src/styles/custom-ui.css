@@ -3,7 +3,11 @@
    Premium styling for SmartEnergy AI
    ============================================ */
 
-/* ----- Glass morphism effects ----- */
+/* --------------------------------------------
+   GLASS MORPHISM EFFECTS
+   Frosted glass surfaces for cards, headers,
+   and overlays.
+   -------------------------------------------- */
 .glass-effect {
     background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(12px);
@@ -18,7 +22,11 @@
     border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* ----- Gradient text effects ----- */
+/* --------------------------------------------
+   GRADIENT TEXT EFFECTS
+   Animated / layered gradient fills applied
+   to headings and key metric values.
+   -------------------------------------------- */
 .gradient-text {
     background: linear-gradient(135deg, #000000 0%, #3a3a3a 50%, #000000 100%);
     -webkit-background-clip: text;
@@ -33,7 +41,11 @@
     background-clip: text;
 }
 
-/* ----- Enhanced card hover effects ----- */
+/* --------------------------------------------
+   ENHANCED CARD HOVER EFFECTS
+   Lift, shadow, and gradient border reveal on
+   hover for cards and content panels.
+   -------------------------------------------- */
 .card-hover {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
@@ -75,7 +87,11 @@
     transform: translateY(-3px);
 }
 
-/* ----- Button premium styles ----- */
+/* --------------------------------------------
+   BUTTON PREMIUM STYLES
+   Shine overlay and press feedback for all
+   primary / secondary action buttons.
+   -------------------------------------------- */
 .btn-premium {
     position: relative;
     overflow: hidden;
@@ -99,12 +115,20 @@
     transform: scale(0.97);
 }
 
-/* ----- Smooth scroll & anchor offset ----- */
+/* --------------------------------------------
+   SMOOTH SCROLL & ANCHOR OFFSET
+   Prevents sticky header from overlapping
+   anchored sections.
+   -------------------------------------------- */
 .scroll-offset {
     scroll-margin-top: 80px;
 }
 
-/* ----- Premium table styles ----- */
+/* --------------------------------------------
+   PREMIUM TABLE STYLES
+   Hover highlights and sticky headers for
+   data / benchmark tables.
+   -------------------------------------------- */
 .table-premium tbody tr {
     transition: all 0.2s ease;
 }
@@ -121,7 +145,10 @@
     border-bottom: 2px solid #c8c5cb;
 }
 
-/* ----- Skeleton loading shimmer ----- */
+/* --------------------------------------------
+   SKELETON LOADING SHIMMER
+   Placeholder animation for loading states.
+   -------------------------------------------- */
 .shimmer {
     background: linear-gradient(
             90deg,
@@ -142,7 +169,11 @@
     }
 }
 
-/* ----- Status pulse indicators ----- */
+/* --------------------------------------------
+   STATUS PULSE INDICATORS
+   Animated ring pulse for online / warning /
+   offline status dots.
+   -------------------------------------------- */
 .pulse-dot {
     display: inline-block;
     width: 8px;
@@ -187,7 +218,11 @@
     }
 }
 
-/* ----- Custom scrollbar (global) ----- */
+/* --------------------------------------------
+   CUSTOM SCROLLBAR (GLOBAL)
+   Slim, subtle scrollbars for all scrollable
+   containers.
+   -------------------------------------------- */
 ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -206,12 +241,18 @@
     background: #b8b8be;
 }
 
-/* ----- Form input focus glow ----- */
+/* --------------------------------------------
+   FORM INPUT FOCUS GLOW
+   Soft outer glow on focused inputs.
+   -------------------------------------------- */
 .input-glow:focus {
     box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05), 0 0 0 1px #000000;
 }
 
-/* ----- Badge animations ----- */
+/* --------------------------------------------
+   BADGE ANIMATIONS
+   Subtle opacity pulse for alert badges.
+   -------------------------------------------- */
 .badge-pulse {
     animation: badge-pulse 2s ease-in-out infinite;
 }
@@ -226,7 +267,10 @@
     }
 }
 
-/* ----- Metric value animations ----- */
+/* --------------------------------------------
+   METRIC VALUE ANIMATIONS
+   Scale + color emphasis on hover.
+   -------------------------------------------- */
 .metric-value {
     transition: all 0.3s ease;
 }
@@ -236,7 +280,10 @@
     color: #000000;
 }
 
-/* ----- Chart tooltip enhancements ----- */
+/* --------------------------------------------
+   CHART TOOLTIP ENHANCEMENTS
+   Dark glass tooltip for chart hover states.
+   -------------------------------------------- */
 .chart-tooltip {
     background: rgba(0, 0, 0, 0.9);
     backdrop-filter: blur(8px);
@@ -250,7 +297,10 @@
     box-shadow: 0 8px 32px -8px rgba(0, 0, 0, 0.3);
 }
 
-/* ----- Feature icon container glow ----- */
+/* --------------------------------------------
+   FEATURE ICON CONTAINER GLOW
+   Radial glow behind feature icons on hover.
+   -------------------------------------------- */
 .icon-glow {
     position: relative;
 }
@@ -269,26 +319,38 @@
     opacity: 1;
 }
 
-/* ----- Responsive table container ----- */
+/* --------------------------------------------
+   RESPONSIVE TABLE CONTAINER
+   Horizontal scroll wrapper for wide tables.
+   -------------------------------------------- */
 .table-responsive {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
 }
 
-/* ----- Modal backdrop blur enhancement ----- */
+/* --------------------------------------------
+   MODAL BACKDROP BLUR ENHANCEMENT
+   Deeper blur + dim for modal overlays.
+   -------------------------------------------- */
 .modal-overlay {
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
 }
 
-/* ----- Number counter animation ----- */
+/* --------------------------------------------
+   NUMBER COUNTER ANIMATION
+   Reserved for animated count-up values.
+   -------------------------------------------- */
 .count-up {
     display: inline-block;
     transition: all 0.3s ease;
 }
 
-/* ----- Divider with gradient ----- */
+/* --------------------------------------------
+   DIVIDER WITH GRADIENT
+   Fading gradient line for section breaks.
+   -------------------------------------------- */
 .divider-gradient {
     height: 1px;
     background: linear-gradient(
@@ -300,7 +362,10 @@
     );
 }
 
-/* ----- CTA section premium styling ----- */
+/* --------------------------------------------
+   CTA SECTION PREMIUM STYLING
+   Subtle radial highlight behind CTA blocks.
+   -------------------------------------------- */
 .cta-premium {
     position: relative;
     overflow: hidden;
@@ -314,7 +379,10 @@
     pointer-events: none;
 }
 
-/* ----- Navigation link underline animation ----- */
+/* --------------------------------------------
+   NAVIGATION LINK UNDERLINE ANIMATION
+   Animated underline that grows on hover.
+   -------------------------------------------- */
 .nav-link {
     position: relative;
     transition: color 0.3s ease;
@@ -335,7 +403,10 @@
     width: 100%;
 }
 
-/* ----- Hero section decorative elements ----- */
+/* --------------------------------------------
+   HERO SECTION DECORATIVE ELEMENTS
+   Blurred ambient circles behind hero content.
+   -------------------------------------------- */
 .hero-decoration {
     position: absolute;
     border-radius: 50%;
@@ -360,7 +431,11 @@
     background: #5d5e66;
 }
 
-/* ----- Print styles ----- */
+/* --------------------------------------------
+   PRINT STYLES
+   Flatten glass, shadows, and motion for
+   printable output.
+   -------------------------------------------- */
 @media print {
     .glass-effect,
     .glass-effect-dark {
@@ -383,7 +458,11 @@
     }
 }
 
-/* ----- Reduced motion preferences ----- */
+/* --------------------------------------------
+   REDUCED MOTION PREFERENCES
+   Disable animations / transitions for users
+   who prefer reduced motion.
+   -------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -400,9 +479,14 @@
 
 /* ============================================
    PREMIUM BACKGROUND IMAGE WITH OVERLAY
+   Layered gradients + SVG / Unsplash imagery
+   used as full-page backgrounds.
    ============================================ */
 
-/* --- Base background with abstract energy theme --- */
+/* --------------------------------------------
+   BASE BACKGROUND — ABSTRACT ENERGY THEME
+   Neutral gradient wash + subtle SVG tint.
+   -------------------------------------------- */
 .bg-smartenergy-image {
     position: relative;
     min-height: 100vh;
@@ -419,7 +503,10 @@
     background-repeat: no-repeat;
 }
 
-/* --- Energy-themed gradient overlay background --- */
+/* --------------------------------------------
+   ENERGY-THEMED GRADIENT OVERLAY BACKGROUND
+   Vertical gradient + wave SVG + dot pattern.
+   -------------------------------------------- */
 .bg-smartenergy-energy-overlay {
     position: relative;
     min-height: 100vh;
@@ -438,7 +525,10 @@
     background-repeat: no-repeat, no-repeat, repeat;
 }
 
-/* --- Background with Unsplash image --- */
+/* --------------------------------------------
+   BACKGROUND — UNSPLASH IMAGE
+   Fixed, full-cover photo with gradient wash.
+   -------------------------------------------- */
 .bg-smartenergy-unsplash {
     position: relative;
     min-height: 100vh;
@@ -457,7 +547,10 @@
     background-attachment: fixed;
 }
 
-/* --- Smart city energy theme --- */
+/* --------------------------------------------
+   BACKGROUND — SMART CITY ENERGY THEME
+   Urban / infrastructure imagery variant.
+   -------------------------------------------- */
 .bg-smartenergy-city {
     position: relative;
     min-height: 100vh;
@@ -476,7 +569,10 @@
     background-attachment: fixed;
 }
 
-/* --- Data/technology theme --- */
+/* --------------------------------------------
+   BACKGROUND — DATA / TECHNOLOGY THEME
+   Abstract data visualization imagery.
+   -------------------------------------------- */
 .bg-smartenergy-tech {
     position: relative;
     min-height: 100vh;
@@ -494,7 +590,10 @@
     background-attachment: fixed;
 }
 
-/* --- Clean energy theme --- */
+/* --------------------------------------------
+   BACKGROUND — CLEAN ENERGY THEME
+   Renewable / solar imagery variant.
+   -------------------------------------------- */
 .bg-smartenergy-clean {
     position: relative;
     min-height: 100vh;
@@ -513,12 +612,19 @@
     background-attachment: fixed;
 }
 
-/* --- Smooth scroll offset for anchor links --- */
+/* --------------------------------------------
+   SMOOTH SCROLL OFFSET FOR ANCHOR LINKS
+   Duplicate rule — kept for parity with
+   original stylesheet.
+   -------------------------------------------- */
 .scroll-offset {
     scroll-margin-top: 80px;
 }
 
-/* --- Glass morphism enhancement for cards on image backgrounds --- */
+/* --------------------------------------------
+   GLASS MORPHISM FOR CARDS ON IMAGE BACKGROUNDS
+   Ensures legibility over photo backgrounds.
+   -------------------------------------------- */
 .glass-image {
     background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(12px);
@@ -531,7 +637,10 @@
    Modern UI improvements
    ============================================ */
 
-/* --- Animated card hover for KPI cards --- */
+/* --------------------------------------------
+   ANIMATED CARD HOVER FOR KPI CARDS
+   Lift + icon scale on hover.
+   -------------------------------------------- */
 .kpi-card {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -549,7 +658,10 @@
     transform: scale(1.1);
 }
 
-/* --- Model selector dropdown enhancement --- */
+/* --------------------------------------------
+   MODEL SELECTOR DROPDOWN ENHANCEMENT
+   Custom chevron icon + focus state.
+   -------------------------------------------- */
 .model-selector {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235d5e66' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
@@ -564,7 +676,11 @@
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23000000' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
 }
 
-/* --- Status indicator pills --- */
+/* --------------------------------------------
+   STATUS INDICATOR PILLS
+   Color-coded success / warning / info pills
+   with a leading status dot.
+   -------------------------------------------- */
 .status-pill {
     display: inline-flex;
     align-items: center;
@@ -612,7 +728,10 @@
     background: #3b82f6;
 }
 
-/* --- Insight cards with icon accents --- */
+/* --------------------------------------------
+   INSIGHT CARDS WITH ICON ACCENTS
+   Left border highlight + icon scale on hover.
+   -------------------------------------------- */
 .insight-card {
     transition: all 0.3s ease;
     border-left: 3px solid transparent;
@@ -631,7 +750,10 @@
     transform: scale(1.05);
 }
 
-/* --- Forecast confidence badge --- */
+/* --------------------------------------------
+   FORECAST CONFIDENCE BADGE
+   High / medium / low confidence indicators.
+   -------------------------------------------- */
 .confidence-badge {
     position: relative;
     padding: 2px 12px;
@@ -660,7 +782,10 @@
     border: 1px solid #fecaca;
 }
 
-/* --- Model performance bar --- */
+/* --------------------------------------------
+   MODEL PERFORMANCE BAR
+   Slim progress bar with severity coloring.
+   -------------------------------------------- */
 .performance-bar {
     height: 4px;
     border-radius: 2px;
@@ -686,7 +811,10 @@
     background: #ef4444;
 }
 
-/* --- Time range selector glow --- */
+/* --------------------------------------------
+   TIME RANGE SELECTOR GLOW
+   Press feedback for segmented time buttons.
+   -------------------------------------------- */
 .time-range-selector button {
     transition: all 0.2s ease;
 }
@@ -695,7 +823,10 @@
     transform: scale(0.95);
 }
 
-/* --- Recommendation card hover effect --- */
+/* --------------------------------------------
+   RECOMMENDATION CARD HOVER EFFECT
+   Lift + action icon slide on hover.
+   -------------------------------------------- */
 .recommendation-card {
     transition: all 0.3s ease;
 }
@@ -718,7 +849,10 @@
    Beautiful chart styling
    ============================================ */
 
-/* --- Chart container glow effect --- */
+/* --------------------------------------------
+   CHART CONTAINER GLOW EFFECT
+   Soft radial highlight behind chart area.
+   -------------------------------------------- */
 .chart-container {
     position: relative;
     border-radius: 12px;
@@ -733,7 +867,10 @@
     pointer-events: none;
 }
 
-/* --- Chart tooltip styling --- */
+/* --------------------------------------------
+   CHART TOOLTIP STYLING (MODERN)
+   Glassy dark tooltip with label + value.
+   -------------------------------------------- */
 .chart-tooltip-modern {
     background: rgba(0, 0, 0, 0.85);
     backdrop-filter: blur(12px);
@@ -769,7 +906,10 @@
     margin-left: 4px;
 }
 
-/* --- Animated chart line --- */
+/* --------------------------------------------
+   ANIMATED CHART LINE
+   Draw-in stroke animation on mount.
+   -------------------------------------------- */
 .chart-line {
     stroke-dasharray: 1000;
     stroke-dashoffset: 1000;
@@ -782,7 +922,10 @@
     }
 }
 
-/* --- Chart point pulse animation --- */
+/* --------------------------------------------
+   CHART POINT PULSE ANIMATION
+   Pop-in scale animation for data points.
+   -------------------------------------------- */
 .chart-point {
     animation: pointPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
@@ -804,7 +947,10 @@
     opacity: 0;
 }
 
-/* --- Progress bar animation --- */
+/* --------------------------------------------
+   PROGRESS BAR ANIMATION
+   Animated fill with shimmer overlay.
+   -------------------------------------------- */
 .progress-bar {
     position: relative;
     overflow: hidden;
@@ -839,7 +985,10 @@
     }
 }
 
-/* --- KPI card enhancement --- */
+/* --------------------------------------------
+   KPI CARD ENHANCEMENT (MODERN)
+   Top accent line reveal + lift on hover.
+   -------------------------------------------- */
 .kpi-card-modern {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
