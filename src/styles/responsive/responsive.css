@@ -1,0 +1,817 @@
+/* ============================================================================
+   RESPONSIVE STYLESHEET
+   ----------------------------------------------------------------------------
+   All media queries for the SmartEnergy AI project live here.
+   Organized by component with clear section headers for easy navigation.
+
+   Breakpoint Reference:
+     xs: 480px   - Small phones
+     sm: 640px   - Large phones / small tablets
+     md: 768px   - Tablets
+     lg: 1024px  - Small laptops
+     xl: 1280px  - Desktops
+     2xl: 1536px - Large desktops
+   ============================================================================ */
+
+
+/* ============================================================================
+   1. GLOBAL UTILITIES
+   Typography scaling, container padding, section rhythm
+   ============================================================================ */
+
+/* --- Typography scaling --- */
+@media (max-width: 768px) {
+    .font-display-kpi {
+        font-size: 36px;
+        line-height: 40px;
+    }
+    .font-headline-lg {
+        font-size: 26px;
+        line-height: 34px;
+    }
+    .font-headline-md {
+        font-size: 20px;
+        line-height: 28px;
+    }
+}
+
+@media (max-width: 480px) {
+    .font-display-kpi {
+        font-size: 30px;
+        line-height: 34px;
+    }
+    .font-headline-lg {
+        font-size: 22px;
+        line-height: 30px;
+    }
+    .font-headline-sm {
+        font-size: 16px;
+        line-height: 24px;
+    }
+}
+
+/* --- Container padding --- */
+@media (max-width: 640px) {
+    .responsive-container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+
+/* --- Section vertical rhythm --- */
+@media (max-width: 768px) {
+    .section-py {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+    }
+}
+
+/* --- Button full-width on mobile --- */
+@media (max-width: 480px) {
+    .btn-full-mobile {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+
+/* ============================================================================
+   2. HEADER
+   src/components/Header.jsx
+   ============================================================================ */
+
+/* Tablet / narrow desktop: collapse nav earlier to make room for CTAs */
+@media (max-width: 900px) {
+    .header-nav {
+        display: none;
+    }
+    .header-brand-tagline {
+        display: none;
+    }
+    .header-wrapper {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+
+/* Small tablets / large phones: shrink CTA buttons */
+@media (max-width: 640px) {
+    .header-sign-in {
+        padding: 0.375rem 0.625rem;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+    .header-cta-label {
+        display: none;
+    }
+    .header-cta-icon {
+        display: inline-flex;
+        align-items: center;
+    }
+    .header-cta-btn {
+        padding: 0.375rem 0.625rem;
+        gap: 0.25rem;
+    }
+}
+
+/* Very small phones: collapse brand text */
+@media (max-width: 420px) {
+    .header-brand-text {
+        display: none;
+    }
+    .header-wrapper {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+    .header-sign-in {
+        padding: 0.3125rem 0.5rem;
+        font-size: 11px;
+    }
+    .header-cta-btn {
+        padding: 0.3125rem 0.5rem;
+    }
+}
+
+/* Ultra narrow: stack brand row properly */
+@media (max-width: 360px) {
+    .header-actions {
+        gap: 0.375rem;
+    }
+    .header-sign-in {
+        padding: 0.25rem 0.4375rem;
+        font-size: 10px;
+    }
+}
+
+/* ============================================================================
+   3. HERO SECTION
+   src/components/HeroSection.jsx and HomePage.jsx (hero block)
+   ============================================================================ */
+
+@media (max-width: 768px) {
+    .hero-heading {
+        font-size: 32px !important;
+        line-height: 40px !important;
+    }
+    .hero-subtitle {
+        font-size: 15px;
+        line-height: 22px;
+    }
+    .hero-badge-text {
+        font-size: 9px;
+        letter-spacing: 0.06em;
+    }
+    .hero-stats-bar {
+        padding: 0.75rem 1rem;
+        gap: 0.75rem;
+        justify-content: center;
+    }
+    .hero-stats-divider {
+        display: none;
+    }
+    .hero-stats-bar > div {
+        flex: 1 1 40%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-heading {
+        font-size: 26px !important;
+        line-height: 34px !important;
+    }
+    .hero-ctas {
+        width: 100%;
+        flex-direction: column;
+    }
+    .hero-ctas button {
+        width: 100%;
+        justify-content: center;
+    }
+    .hero-stats-bar > div {
+        flex: 1 1 100%;
+    }
+}
+
+/* Dashboard preview card */
+@media (max-width: 1024px) {
+    .hero-preview-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .hero-preview {
+        margin-top: 2rem;
+    }
+    .hero-preview-header span {
+        font-size: 10px;
+    }
+    .hero-preview-title {
+        font-size: 10px;
+        max-width: 140px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .hero-kpi-value {
+        font-size: 36px !important;
+        line-height: 40px !important;
+    }
+    .hero-chart {
+        height: 140px !important;
+    }
+    .hero-timeline-labels {
+        font-size: 9px;
+    }
+    .hero-timeline-labels span:nth-child(2),
+    .hero-timeline-labels span:nth-child(4) {
+        display: none;
+    }
+}
+
+
+/* ============================================================================
+   4. ABOUT SECTION
+   src/components/AboutSection.jsx
+   ============================================================================ */
+
+@media (max-width: 1024px) {
+    .about-grid {
+        gap: 2.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .about-stats {
+        gap: 1.25rem;
+    }
+    .about-stats > div {
+        flex: 1 1 30%;
+    }
+    .about-kpi {
+        font-size: 32px !important;
+        line-height: 36px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .about-stats > div {
+        flex: 1 1 45%;
+    }
+    .about-kpi {
+        font-size: 26px !important;
+        line-height: 30px !important;
+    }
+    .about-image-grid {
+        padding: 1rem;
+        gap: 0.5rem;
+    }
+    .about-image-card {
+        padding: 1rem;
+    }
+    .about-image-card .material-symbols-outlined {
+        font-size: 1.75rem !important;
+    }
+    .about-image-value {
+        font-size: 16px !important;
+        line-height: 22px !important;
+    }
+    .about-image-label {
+        font-size: 10px;
+    }
+}
+
+
+/* ============================================================================
+   5. FEATURES SECTION
+   src/components/FeaturesSection.jsx
+   ============================================================================ */
+
+@media (max-width: 1024px) {
+    .features-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    .feature-card {
+        padding: 1.25rem;
+    }
+    .feature-meta {
+        font-size: 10px;
+    }
+}
+
+
+/* ============================================================================
+   6. INSIGHTS SECTION
+   src/components/InsightsSection.jsx
+   ============================================================================ */
+
+@media (max-width: 768px) {
+    .insights-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    .insight-card {
+        padding: 1.5rem;
+    }
+}
+
+
+/* ============================================================================
+   7. BENEFITS SECTION
+   src/components/BenefitsSection.jsx
+   ============================================================================ */
+
+@media (max-width: 1024px) {
+    .benefits-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .benefit-card {
+        padding: 1.5rem;
+    }
+    .benefit-icon {
+        font-size: 1.5rem !important;
+    }
+}
+
+
+/* ============================================================================
+   8. TESTIMONIALS SECTION
+   src/components/TestimonialsSection.jsx
+   ============================================================================ */
+
+@media (max-width: 1024px) {
+    .testimonials-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .testimonials-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    .testimonial-card {
+        padding: 1.5rem;
+    }
+    .testimonial-avatar {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+}
+
+
+/* ============================================================================
+   9. BENCHMARKS SECTION & TABLE
+   src/components/BenchmarksSection.jsx, BenchmarksTable.jsx
+   ============================================================================ */
+
+@media (max-width: 768px) {
+    .benchmarks-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .benchmarks-table {
+        min-width: 720px;
+    }
+    .benchmarks-table th,
+    .benchmarks-table td {
+        padding: 0.625rem 0.875rem;
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 480px) {
+    .benchmarks-table {
+        min-width: 640px;
+    }
+    .benchmarks-table th,
+    .benchmarks-table td {
+        padding: 0.5rem 0.75rem;
+        font-size: 10px;
+    }
+    .benchmarks-card-badge {
+        font-size: 9px;
+        padding: 0.125rem 0.375rem;
+    }
+}
+
+
+/* ============================================================================
+   10. CONTACT SECTION
+   src/components/ContactSection.jsx
+   ============================================================================ */
+
+@media (max-width: 1024px) {
+    .contact-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .contact-card {
+        padding: 1.5rem;
+        border-radius: 1rem;
+    }
+    .contact-form input,
+    .contact-form textarea {
+        font-size: 14px;
+    }
+    .contact-social a {
+        width: 2.25rem;
+        height: 2.25rem;
+    }
+}
+
+
+/* ============================================================================
+   11. MODALS
+   src/components/Modal.jsx, LoginModal.jsx, RegisterModal.jsx
+   ============================================================================ */
+
+@media (max-width: 640px) {
+    .modal-panel {
+        padding: 1.5rem;
+        border-radius: 1rem;
+        max-height: 95vh;
+    }
+    .modal-title {
+        font-size: 20px;
+        line-height: 28px;
+    }
+    .modal-subtitle {
+        font-size: 12px;
+    }
+    .register-grid-2 {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .modal-panel {
+        padding: 1.25rem;
+        margin: 0.5rem;
+        max-width: calc(100vw - 1rem);
+    }
+    .modal-title {
+        font-size: 18px;
+        line-height: 24px;
+    }
+    .modal-footer {
+        font-size: 12px;
+    }
+    .modal-oauth-btn {
+        font-size: 12px;
+        height: 2.25rem;
+    }
+}
+/* --- Footer always at bottom --- */
+@media (max-width: 768px) {
+    .footer-content {
+        padding-left: 1rem;
+        padding-right: 1rem;
+        font-size: 11px;
+    }
+}
+
+/* ============================================================================
+   12. CHARTS
+   src/components/ModernChart.jsx, ConsumptionChart.jsx
+   ============================================================================ */
+
+@media (max-width: 640px) {
+    .chart-wrapper {
+        height: 140px;
+    }
+    .chart-svg text {
+        font-size: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .chart-wrapper {
+        height: 120px;
+    }
+    .chart-svg text {
+        font-size: 7px;
+    }
+}
+
+
+/* ============================================================================
+   13. DASHBOARD
+   src/pages/Dashboard.jsx
+   ============================================================================ */
+
+@media (max-width: 1024px) {
+    .dashboard-sidebar {
+        width: 4.5rem !important;
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+    .dashboard-sidebar .sidebar-label-text {
+        display: none !important;
+    }
+    .dashboard-sidebar nav button {
+        justify-content: center;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+    .dashboard-sidebar .sidebar-brand-row {
+        justify-content: center;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+    .dashboard-sidebar .sidebar-footer-user {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 0.75rem;
+        padding-left: 0;
+        padding-right: 0;
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+    }
+    .dashboard-sidebar .sidebar-footer-user > div {
+        flex: 0 0 auto;
+    }
+    .dashboard-sidebar .sidebar-exit-btn {
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+    }
+    .dashboard-main {
+        margin-left: 4.5rem !important;
+    }
+}
+
+/* --- ≤768px: slide-out drawer + hamburger --- */
+@media (max-width: 768px) {
+    .dashboard-sidebar {
+        width: 16rem !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
+        z-index: 50;
+    }
+    .dashboard-sidebar.is-open {
+        transform: translateX(0);
+    }
+    .dashboard-sidebar.is-open .sidebar-label-text {
+        display: inline !important;
+    }
+    .dashboard-sidebar.is-open nav button {
+        justify-content: flex-start;
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+    .dashboard-sidebar.is-open .sidebar-brand-row {
+        justify-content: flex-start;
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+    }
+    .dashboard-sidebar.is-open .sidebar-footer-user {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+    .dashboard-sidebar.is-open .sidebar-exit-btn {
+        padding: 0.5rem 0.75rem;
+    }
+    .dashboard-main {
+        margin-left: 0 !important;
+    }
+    .dashboard-mobile-toggle {
+        display: inline-flex !important;
+    }
+}
+
+
+/* ============================================================================
+   14. FOOTER
+   src/App.jsx (footer element)
+   ============================================================================ */
+
+@media (max-width: 640px) {
+    .footer-content {
+        font-size: 11px;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+/* ============================================================================
+   13b. DASHBOARD PAGES (Analytics, Prediction, History, Household, Profile)
+   src/pages/*.jsx
+   ============================================================================ */
+
+/* --- Shared: KPI grids go 4→2→1 instead of 4→2 (cramped) --- */
+@media (max-width: 1100px) {
+    .kpi-grid-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 0.75rem;
+    }
+}
+
+@media (max-width: 520px) {
+    .kpi-grid-4 {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* --- Shared: Page header row (title + action button) --- */
+@media (max-width: 900px) {
+    .page-header-row {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 0.75rem;
+    }
+    .page-header-actions {
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+    .page-header-actions > button {
+        flex: 0 1 auto;
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-header-actions {
+        width: 100%;
+    }
+    .page-header-actions > button {
+        flex: 1 1 auto;
+        justify-content: center;
+    }
+    .dashboard-sidebar.is-open .sidebar-footer-user {
+        padding-left: 0.25rem;
+        padding-right: 0.25rem;
+    }
+    .dashboard-sidebar.is-open .sidebar-exit-btn .material-symbols-outlined {
+        font-size: 18px;
+    }
+}
+
+/* --- Shared: Filter chip row (All Models / RF / LSTM / XGBoost) --- */
+@media (max-width: 768px) {
+    .filter-chip-row {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 0.25rem;
+        flex-wrap: nowrap !important;
+    }
+    .filter-chip-row > button {
+        flex-shrink: 0;
+        white-space: nowrap;
+    }
+}
+
+/* --- Shared: Search input in filters --- */
+@media (max-width: 640px) {
+    .filter-search {
+        width: 100%;
+        min-width: 0;
+    }
+}
+
+/* --- KPI card: prevent value truncation on tablet --- */
+@media (max-width: 1100px) {
+    .kpi-card-value {
+        font-size: 36px !important;
+        line-height: 40px !important;
+    }
+    .kpi-card-title {
+        font-size: 10px !important;
+        letter-spacing: 0.03em !important;
+    }
+}
+
+@media (max-width: 640px) {
+    .kpi-card-value {
+        font-size: 30px !important;
+        line-height: 34px !important;
+    }
+    .kpi-card {
+        padding: 1rem !important;
+    }
+}
+
+/* --- History & Analytics: Stats row (Total Predictions / Avg Accuracy / Best Model / Avg Error) --- */
+@media (max-width: 1100px) {
+    .stats-row-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-row-4 {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* --- History table: horizontal scroll on tablet & below --- */
+@media (max-width: 900px) {
+    .history-table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .history-table-wrapper table {
+        min-width: 720px;
+    }
+}
+
+/* --- Household: appliance card grid --- */
+@media (max-width: 1100px) {
+    .appliance-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* --- Household: member row wraps on small --- */
+@media (max-width: 640px) {
+    .member-row {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+    .member-row > div:last-child {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+/* --- Profile: personal info 2-col → 1-col --- */
+@media (max-width: 900px) {
+    .profile-info-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* --- Prediction: model selector + 3 stat cards --- */
+@media (max-width: 1100px) {
+    .prediction-model-grid {
+        grid-template-columns: 1fr !important;
+    }
+    .prediction-stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 0.75rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .prediction-stats-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* --- Analytics: chart header (title + legend) stacks --- */
+@media (max-width: 640px) {
+    .chart-header {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 0.75rem;
+    }
+}
+
+/* --- Dashboard top header (in Dashboard.jsx) --- */
+@media (max-width: 900px) {
+    .dashboard-top-header {
+        flex-direction: column;
+        align-items: flex-start !important;
+        height: auto !important;
+        padding: 0.75rem 1rem !important;
+        gap: 0.5rem;
+    }
+    .dashboard-top-header .dashboard-header-meta {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+@media (max-width: 640px) {
+    .dashboard-top-header .dashboard-header-meta {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    .dashboard-date-pill span:last-child {
+        display: none;
+    }
+}
