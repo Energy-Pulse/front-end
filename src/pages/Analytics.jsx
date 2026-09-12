@@ -61,7 +61,7 @@ export const Analytics = () => {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-2">
+            <div className="page-header-row flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-2">
                 <div>
                     <h1 className="font-headline-lg text-headline-lg font-semibold text-primary tracking-tight">
                         Energy Analytics
@@ -70,7 +70,7 @@ export const Analytics = () => {
                         Deep insights into your consumption patterns and trends
                     </p>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="page-header-actions flex items-center gap-3">
                     <button className="h-9 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-primary font-label-md text-label-md font-medium hover:bg-surface-container-low transition-colors inline-flex items-center gap-2 btn-premium">
                         <span className="material-symbols-outlined text-[18px]">download</span>
                         Export Report
@@ -83,7 +83,7 @@ export const Analytics = () => {
 
             {/* Time Range Selector */}
             <div className="flex items-center justify-between flex-wrap gap-3">
-                <div className="flex items-center gap-2 border border-outline-variant/40 rounded-lg p-1 bg-surface-container-low/80">
+                <div className="filter-chip-row flex items-center gap-2 border border-outline-variant/40 rounded-lg p-1 bg-surface-container-low/80">
                     {['daily', 'weekly', 'monthly'].map((v) => (
                         <button
                             key={v}
@@ -106,14 +106,14 @@ export const Analytics = () => {
             </div>
 
             {/* KPI Cards with Trend */}
-            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                <div className="p-5 rounded-xl border border-outline-variant bg-surface-container-lowest card-hover">
+            <div className="kpi-grid-4 grid grid-cols-1 sm:grid-cols-4 gap-4">
+                <div className="kpi-card p-5 rounded-xl border border-outline-variant bg-surface-container-lowest card-hover">
                     <div className="flex items-center justify-between">
-                        <span className="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Total Consumption</span>
+                        <span className="kpi-card-title font-label-sm text-label-sm text-secondary uppercase tracking-wider">Total Consumption</span>
                         <span className="material-symbols-outlined text-primary/60 text-[22px]">functions</span>
                     </div>
                     <div className="mt-2 flex items-baseline gap-2">
-                        <span className="font-display-kpi text-display-kpi text-primary tracking-tight">
+                        <span className="kpi-card-value font-display-kpi text-display-kpi text-primary tracking-tight">
                             {total.toFixed(1)}
                         </span>
                         <span className="font-headline-sm text-headline-sm text-secondary font-normal">
@@ -129,13 +129,13 @@ export const Analytics = () => {
                     </div>
                 </div>
 
-                <div className="p-5 rounded-xl border border-outline-variant bg-surface-container-lowest card-hover">
+                <div className="kpi-card p-5 rounded-xl border border-outline-variant bg-surface-container-lowest card-hover">
                     <div className="flex items-center justify-between">
-                        <span className="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Average</span>
+                        <span className="kpi-card-title font-label-sm text-label-sm text-secondary uppercase tracking-wider">Average</span>
                         <span className="material-symbols-outlined text-primary/60 text-[22px]">show_chart</span>
                     </div>
                     <div className="mt-2 flex items-baseline gap-2">
-                        <span className="font-display-kpi text-display-kpi text-primary tracking-tight">
+                        <span className="kpi-card-value font-display-kpi text-display-kpi text-primary tracking-tight">
                             {average.toFixed(1)}
                         </span>
                         <span className="font-headline-sm text-headline-sm text-secondary font-normal">
@@ -147,13 +147,13 @@ export const Analytics = () => {
                     </p>
                 </div>
 
-                <div className="p-5 rounded-xl border border-outline-variant bg-surface-container-lowest card-hover">
+                <div className="kpi-card p-5 rounded-xl border border-outline-variant bg-surface-container-lowest card-hover">
                     <div className="flex items-center justify-between">
-                        <span className="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Peak</span>
+                        <span className="kpi-card-title font-label-sm text-label-sm text-secondary uppercase tracking-wider">Peak</span>
                         <span className="material-symbols-outlined text-amber-500 text-[22px]">trending_up</span>
                     </div>
                     <div className="mt-2 flex items-baseline gap-2">
-                        <span className="font-display-kpi text-display-kpi text-primary tracking-tight">
+                        <span className="kpi-card-value font-display-kpi text-display-kpi text-primary tracking-tight">
                             {peak.toFixed(1)}
                         </span>
                         <span className="font-headline-sm text-headline-sm text-secondary font-normal">
@@ -165,13 +165,13 @@ export const Analytics = () => {
                     </p>
                 </div>
 
-                <div className="p-5 rounded-xl border border-outline-variant bg-surface-container-lowest card-hover">
+                <div className="kpi-card p-5 rounded-xl border border-outline-variant bg-surface-container-lowest card-hover">
                     <div className="flex items-center justify-between">
-                        <span className="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Data Points</span>
+                        <span className="kpi-card-title font-label-sm text-label-sm text-secondary uppercase tracking-wider">Data Points</span>
                         <span className="material-symbols-outlined text-primary/60 text-[22px]">data_usage</span>
                     </div>
                     <div className="mt-2">
-                        <span className="font-display-kpi text-display-kpi text-primary tracking-tight">
+                        <span className="kpi-card-value font-display-kpi text-display-kpi text-primary tracking-tight">
                             {currentData.data.length}
                         </span>
                     </div>
@@ -183,7 +183,7 @@ export const Analytics = () => {
 
             {/* Main Chart */}
             <div className="border border-outline-variant rounded-xl p-6 bg-surface-container-lowest card-hover-glow">
-                <div className="flex items-center justify-between mb-6">
+                <div className="chart-header flex items-center justify-between mb-6">
                     <div>
                         <h3 className="font-headline-sm text-headline-sm font-semibold text-primary">
                             {currentData.label} Consumption Trend

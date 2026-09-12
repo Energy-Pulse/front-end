@@ -43,14 +43,14 @@ export const BenefitsSection = () => {
                         <span className="gradient-text-accent">energy management</span>
                     </h2>
                 </div>
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="benefits-grid grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {benefits.map((benefit, index) => (
                         <div
                             key={index}
-                            className="glass-image rounded-xl p-8 border border-outline-variant/40 card-hover"
+                            className="benefit-card glass-image rounded-xl p-8 border border-outline-variant/40 card-hover"
                         >
                             <div className="flex items-center gap-4 mb-4">
-                                <span className="material-symbols-outlined text-3xl text-primary">{benefit.icon}</span>
+                                <span className="benefit-icon material-symbols-outlined text-3xl text-primary">{benefit.icon}</span>
                                 <div>
                                     <h3 className="font-headline-sm text-headline-sm font-semibold text-primary">
                                         {benefit.title}

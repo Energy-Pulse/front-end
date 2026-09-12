@@ -29,7 +29,7 @@ export const Profile = ({ user }) => {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-2">
+            <div className="page-header-row flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-2">
                 <div>
                     <h1 className="font-headline-lg text-headline-lg font-semibold text-primary tracking-tight">
                         Profile Settings
@@ -38,19 +38,21 @@ export const Profile = ({ user }) => {
                         Manage your account details and preferences
                     </p>
                 </div>
-                <button
-                    onClick={() => isEditing ? handleSave() : setIsEditing(true)}
-                    className={`h-9 px-4 rounded-lg font-label-md text-label-md font-medium inline-flex items-center gap-2 shadow-sm transition-colors ${
-                        isEditing
-                            ? 'bg-emerald-600 text-white hover:bg-emerald-700'
-                            : 'bg-primary text-on-primary hover:bg-on-surface-variant'
-                    }`}
-                >
-                    <span className="material-symbols-outlined text-[18px]">
-                        {isEditing ? 'check' : 'edit'}
-                    </span>
-                    {isEditing ? 'Save Changes' : 'Edit Profile'}
-                </button>
+                <div className="page-header-actions flex items-center gap-3">
+                    <button
+                        onClick={() => isEditing ? handleSave() : setIsEditing(true)}
+                        className={`h-9 px-4 rounded-lg font-label-md text-label-md font-medium inline-flex items-center gap-2 shadow-sm transition-colors ${
+                            isEditing
+                                ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+                                : 'bg-primary text-on-primary hover:bg-on-surface-variant'
+                        }`}
+                    >
+                        <span className="material-symbols-outlined text-[18px]">
+                            {isEditing ? 'check' : 'edit'}
+                        </span>
+                        {isEditing ? 'Save Changes' : 'Edit Profile'}
+                    </button>
+                </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -90,7 +92,7 @@ export const Profile = ({ user }) => {
                         <h4 className="font-headline-sm text-headline-sm font-semibold text-primary mb-4">
                             Personal Information
                         </h4>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="profile-info-grid grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label className="block font-label-sm text-label-sm font-medium text-secondary mb-1">
                                     Full Name
@@ -163,42 +165,42 @@ export const Profile = ({ user }) => {
                             Notification Preferences
                         </h4>
                         <div className="space-y-3">
-                            <div className="flex items-center justify-between py-2 border-b border-outline-variant/40">
+                            <div className="flex items-center justify-between py-2 border-b border-outline-variant/40 gap-3">
                                 <div>
                                     <div className="font-label-md text-label-md font-medium text-primary">Push Notifications</div>
                                     <div className="font-body-sm text-body-sm text-secondary">Receive real-time alerts on your device</div>
                                 </div>
                                 <button
                                     onClick={() => isEditing && setFormData(prev => ({ ...prev, notifications: !prev.notifications }))}
-                                    className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors duration-200 ease-in-out ${
+                                    className={`w-11 h-6 flex-shrink-0 flex items-center rounded-full p-1 transition-colors duration-200 ease-in-out ${
                                         formData.notifications ? 'bg-primary justify-end' : 'bg-outline-variant justify-start'
                                     } ${!isEditing ? 'opacity-50 cursor-default' : ''}`}
                                 >
                                     <span className="w-4 h-4 rounded-full bg-white shadow-md transform transition-transform" />
                                 </button>
                             </div>
-                            <div className="flex items-center justify-between py-2 border-b border-outline-variant/40">
+                            <div className="flex items-center justify-between py-2 border-b border-outline-variant/40 gap-3">
                                 <div>
                                     <div className="font-label-md text-label-md font-medium text-primary">Email Alerts</div>
                                     <div className="font-body-sm text-body-sm text-secondary">Weekly summaries and important updates</div>
                                 </div>
                                 <button
                                     onClick={() => isEditing && setFormData(prev => ({ ...prev, emailAlerts: !prev.emailAlerts }))}
-                                    className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors duration-200 ease-in-out ${
+                                    className={`w-11 h-6 flex-shrink-0 flex items-center rounded-full p-1 transition-colors duration-200 ease-in-out ${
                                         formData.emailAlerts ? 'bg-primary justify-end' : 'bg-outline-variant justify-start'
                                     } ${!isEditing ? 'opacity-50 cursor-default' : ''}`}
                                 >
                                     <span className="w-4 h-4 rounded-full bg-white shadow-md transform transition-transform" />
                                 </button>
                             </div>
-                            <div className="flex items-center justify-between py-2">
+                            <div className="flex items-center justify-between py-2 gap-3">
                                 <div>
                                     <div className="font-label-md text-label-md font-medium text-primary">Weekly Reports</div>
                                     <div className="font-body-sm text-body-sm text-secondary">Detailed consumption analysis every Monday</div>
                                 </div>
                                 <button
                                     onClick={() => isEditing && setFormData(prev => ({ ...prev, weeklyReports: !prev.weeklyReports }))}
-                                    className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors duration-200 ease-in-out ${
+                                    className={`w-11 h-6 flex-shrink-0 flex items-center rounded-full p-1 transition-colors duration-200 ease-in-out ${
                                         formData.weeklyReports ? 'bg-primary justify-end' : 'bg-outline-variant justify-start'
                                     } ${!isEditing ? 'opacity-50 cursor-default' : ''}`}
                                 >

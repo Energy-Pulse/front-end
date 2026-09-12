@@ -27,7 +27,7 @@ export const PredictionHistory = () => {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-2">
+            <div className="page-header-row flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-2">
                 <div>
                     <h1 className="font-headline-lg text-headline-lg font-semibold text-primary tracking-tight">
                         Prediction History
@@ -36,37 +36,39 @@ export const PredictionHistory = () => {
                         Track forecast accuracy and model performance over time
                     </p>
                 </div>
-                <button className="h-9 px-4 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-medium hover:bg-on-surface-variant transition-colors inline-flex items-center gap-2 shadow-sm">
-                    <span className="material-symbols-outlined text-[18px]">file_download</span>
-                    Export Data
-                </button>
+                <div className="page-header-actions flex items-center gap-3">
+                    <button className="h-9 px-4 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-medium hover:bg-on-surface-variant transition-colors inline-flex items-center gap-2 shadow-sm">
+                        <span className="material-symbols-outlined text-[18px]">file_download</span>
+                        Export Data
+                    </button>
+                </div>
             </div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                <div className="p-4 rounded-xl border border-outline-variant bg-surface-container-lowest">
-                    <span className="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Total Predictions</span>
-                    <div className="mt-1 font-display-kpi text-display-kpi text-primary tracking-tight">{historyData.length}</div>
+            <div className="stats-row-4 grid grid-cols-1 sm:grid-cols-4 gap-4">
+                <div className="kpi-card p-4 rounded-xl border border-outline-variant bg-surface-container-lowest">
+                    <span className="kpi-card-title font-label-sm text-label-sm text-secondary uppercase tracking-wider">Total Predictions</span>
+                    <div className="kpi-card-value mt-1 font-display-kpi text-display-kpi text-primary tracking-tight">{historyData.length}</div>
                 </div>
-                <div className="p-4 rounded-xl border border-outline-variant bg-surface-container-lowest">
-                    <span className="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Avg Accuracy</span>
-                    <div className="mt-1 font-display-kpi text-display-kpi text-primary tracking-tight">{avgAccuracy}%</div>
+                <div className="kpi-card p-4 rounded-xl border border-outline-variant bg-surface-container-lowest">
+                    <span className="kpi-card-title font-label-sm text-label-sm text-secondary uppercase tracking-wider">Avg Accuracy</span>
+                    <div className="kpi-card-value mt-1 font-display-kpi text-display-kpi text-primary tracking-tight">{avgAccuracy}%</div>
                 </div>
-                <div className="p-4 rounded-xl border border-outline-variant bg-surface-container-lowest">
-                    <span className="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Best Model</span>
+                <div className="kpi-card p-4 rounded-xl border border-outline-variant bg-surface-container-lowest">
+                    <span className="kpi-card-title font-label-sm text-label-sm text-secondary uppercase tracking-wider">Best Model</span>
                     <div className="mt-1 font-headline-md text-headline-md font-semibold text-primary">XGBoost</div>
                     <span className="font-body-sm text-body-sm text-secondary">99.0% accuracy</span>
                 </div>
-                <div className="p-4 rounded-xl border border-outline-variant bg-surface-container-lowest">
-                    <span className="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Avg Error</span>
-                    <div className="mt-1 font-display-kpi text-display-kpi text-primary tracking-tight">±1.2</div>
+                <div className="kpi-card p-4 rounded-xl border border-outline-variant bg-surface-container-lowest">
+                    <span className="kpi-card-title font-label-sm text-label-sm text-secondary uppercase tracking-wider">Avg Error</span>
+                    <div className="kpi-card-value mt-1 font-display-kpi text-display-kpi text-primary tracking-tight">±1.2</div>
                     <span className="font-body-sm text-body-sm text-secondary">kWh</span>
                 </div>
             </div>
 
             {/* Filters */}
             <div className="flex flex-col sm:flex-row gap-3">
-                <div className="flex items-center gap-2 border border-outline-variant rounded-lg p-1 bg-surface-container-low/80">
+                <div className="filter-chip-row flex items-center gap-2 border border-outline-variant rounded-lg p-1 bg-surface-container-low/80">
                     {['all', 'Random Forest', 'LSTM', 'XGBoost'].map((model) => (
                         <button
                             key={model}
@@ -79,7 +81,7 @@ export const PredictionHistory = () => {
                         </button>
                     ))}
                 </div>
-                <div className="relative flex-1">
+                <div className="filter-search relative flex-1">
                     <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary text-[18px]">search</span>
                     <input
                         type="text"
@@ -92,7 +94,7 @@ export const PredictionHistory = () => {
             </div>
 
             {/* History Table */}
-            <div className="border border-outline-variant rounded-xl overflow-hidden bg-surface-container-lowest">
+            <div className="history-table-wrapper border border-outline-variant rounded-xl overflow-hidden bg-surface-container-lowest">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
                         <thead className="bg-surface-container-low border-b border-outline-variant">

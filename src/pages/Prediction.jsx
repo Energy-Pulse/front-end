@@ -31,7 +31,7 @@ export const Predictions = () => {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-2">
+            <div className="page-header-row flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-2">
                 <div>
                     <h1 className="font-headline-lg text-headline-lg font-semibold text-primary tracking-tight">
                         Predictive Insights
@@ -40,7 +40,7 @@ export const Predictions = () => {
                         Machine learning forecasts and automated tariff optimizations
                     </p>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="page-header-actions flex items-center gap-3">
                     <button
                         onClick={handleRunForecast}
                         disabled={isRunning}
@@ -59,7 +59,7 @@ export const Predictions = () => {
             </div>
 
             {/* Model Selector & Stats */}
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+            <div className="prediction-model-grid grid grid-cols-1 lg:grid-cols-4 gap-4">
                 <div className="lg:col-span-1">
                     <div className="border border-outline-variant rounded-xl p-4 bg-surface-container-lowest h-full">
                         <label className="font-label-sm text-label-sm text-secondary uppercase tracking-wider block mb-2">
@@ -95,14 +95,14 @@ export const Predictions = () => {
                     </div>
                 </div>
 
-                <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div className="p-5 rounded-xl border border-outline-variant bg-surface-container-lowest card-hover">
+                <div className="prediction-stats-grid lg:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="kpi-card p-5 rounded-xl border border-outline-variant bg-surface-container-lowest card-hover">
                         <div className="flex items-center justify-between">
-                            <span className="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Expected Next 24h</span>
+                            <span className="kpi-card-title font-label-sm text-label-sm text-secondary uppercase tracking-wider">Expected Next 24h</span>
                             <span className="material-symbols-outlined text-primary/60 text-[22px]">online_prediction</span>
                         </div>
                         <div className="mt-2 flex items-baseline gap-2">
-                            <span className="font-display-kpi text-display-kpi text-primary tracking-tight">34.5</span>
+                            <span className="kpi-card-value font-display-kpi text-display-kpi text-primary tracking-tight">34.5</span>
                             <span className="font-headline-sm text-headline-sm text-secondary font-normal">kWh</span>
                         </div>
                         <div className="flex items-center gap-2 mt-1">
@@ -114,25 +114,25 @@ export const Predictions = () => {
                         </div>
                     </div>
 
-                    <div className="p-5 rounded-xl border border-outline-variant bg-surface-container-lowest card-hover">
+                    <div className="kpi-card p-5 rounded-xl border border-outline-variant bg-surface-container-lowest card-hover">
                         <div className="flex items-center justify-between">
-                            <span className="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Model Confidence</span>
+                            <span className="kpi-card-title font-label-sm text-label-sm text-secondary uppercase tracking-wider">Model Confidence</span>
                             <span className="material-symbols-outlined text-primary/60 text-[22px]">verified</span>
                         </div>
                         <div className="mt-2 flex items-baseline gap-2">
-                            <span className="font-display-kpi text-display-kpi text-primary tracking-tight">96.8</span>
+                            <span className="kpi-card-value font-display-kpi text-display-kpi text-primary tracking-tight">96.8</span>
                             <span className="font-headline-sm text-headline-sm text-secondary font-normal">%</span>
                         </div>
                         <p className="font-body-sm text-body-sm text-secondary mt-1">MAPE: 3.2%</p>
                     </div>
 
-                    <div className="p-5 rounded-xl border border-outline-variant bg-surface-container-lowest card-hover">
+                    <div className="kpi-card p-5 rounded-xl border border-outline-variant bg-surface-container-lowest card-hover">
                         <div className="flex items-center justify-between">
-                            <span className="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Peak Spike</span>
+                            <span className="kpi-card-title font-label-sm text-label-sm text-secondary uppercase tracking-wider">Peak Spike</span>
                             <span className="material-symbols-outlined text-amber-500 text-[22px]">warning</span>
                         </div>
                         <div className="mt-2 flex items-baseline gap-2">
-                            <span className="font-display-kpi text-display-kpi text-primary tracking-tight">18:30</span>
+                            <span className="kpi-card-value font-display-kpi text-display-kpi text-primary tracking-tight">18:30</span>
                             <span className="font-headline-sm text-headline-sm text-secondary font-normal">PM</span>
                         </div>
                         <p className="font-body-sm text-body-sm text-amber-600 font-medium mt-1">Tariff Spike: +$0.14/kWh</p>
@@ -142,7 +142,7 @@ export const Predictions = () => {
 
             {/* Main Forecast Chart */}
             <div className="border border-outline-variant rounded-xl p-6 bg-surface-container-lowest card-hover-glow">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+                <div className="chart-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
                     <div>
                         <h3 className="font-headline-sm text-headline-sm font-semibold text-primary">
                             7-Day Load Forecast Envelope
@@ -151,7 +151,7 @@ export const Predictions = () => {
                             95% statistical confidence bounds for forecast period
                         </p>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4 flex-wrap">
                         <div className="flex items-center gap-1.5">
                             <span className="w-3 h-3 rounded-full bg-primary"></span>
                             <span className="font-label-sm text-label-sm text-secondary">Actual</span>

@@ -46,17 +46,17 @@ export const TestimonialsSection = () => {
                         Hear from real users who transformed their energy management with SmartEnergy AI.
                     </p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="testimonials-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {testimonialsData.map((testimonial) => (
                         <div
                             key={testimonial.id}
-                            className="glass-image rounded-xl p-8 border border-outline-variant/40 card-hover flex flex-col"
+                            className="testimonial-card glass-image rounded-xl p-8 border border-outline-variant/40 card-hover flex flex-col"
                         >
                             <div className="flex items-center gap-4 mb-4">
                                 <img
                                     src={testimonial.image}
                                     alt={testimonial.name}
-                                    className="w-12 h-12 rounded-full border-2 border-outline-variant/40"
+                                    className="testimonial-avatar w-12 h-12 rounded-full border-2 border-outline-variant/40"
                                 />
                                 <div>
                                     <div className="font-headline-sm text-headline-sm font-semibold text-primary">

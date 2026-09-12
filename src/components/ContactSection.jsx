@@ -16,10 +16,10 @@ export const ContactSection = () => {
                         Have questions? We'd love to hear from you. Our team is ready to help you optimize your energy management.
                     </p>
                 </div>
-                <div className="glass-image rounded-2xl p-8 md:p-12 border border-outline-variant/40">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="contact-card glass-image rounded-2xl p-8 md:p-12 border border-outline-variant/40">
+                    <div className="contact-grid grid grid-cols-1 lg:grid-cols-2 gap-8">
                         <div>
-                            <form className="space-y-4">
+                            <form className="contact-form space-y-4">
                                 <div>
                                     <label className="block font-label-sm text-label-sm font-medium text-primary mb-1">
                                         Full Name
@@ -93,7 +93,7 @@ export const ContactSection = () => {
                                     <span className="font-body-md text-body-md text-secondary">San Francisco, CA</span>
                                 </div>
                             </div>
-                            <div className="flex gap-3 pt-4 border-t border-outline-variant/40">
+                            <div className="contact-social flex gap-3 pt-4 border-t border-outline-variant/40">
                                 <a href="#" className="w-10 h-10 rounded-lg border border-outline-variant/40 flex items-center justify-center hover:bg-surface-container-low transition-colors">
                                     <span className="material-symbols-outlined text-primary">link</span>
                                 </a>

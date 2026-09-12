@@ -1,3 +1,4 @@
+@import './styles/responsive/responsive.css';
 @import "tailwindcss";
 
 /* Google Material Symbols */

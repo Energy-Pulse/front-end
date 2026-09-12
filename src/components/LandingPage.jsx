@@ -9,7 +9,7 @@ import { ContactSection } from './ContactSection';
 
 export const LandingPage = ({ onShowRegisterModal, onShowDashboard }) => {
     return (
-        <main className="flex-1 relative z-10">
+        <main className="flex-1 relative z-10 flex flex-col">
             <HeroSection
                 onShowRegisterModal={onShowRegisterModal}
                 onShowDashboard={onShowDashboard}

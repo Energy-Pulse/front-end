@@ -23,7 +23,7 @@ export const Header = ({
     };
 
     return (
-        <header className="sticky top-0 z-40 bg-surface-container-lowest/95 backdrop-blur border-b border-outline-variant glass-effect">
+        <header className="header-wrapper sticky top-0 z-40 bg-surface-container-lowest/95 backdrop-blur border-b border-outline-variant glass-effect">
             <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
                 {/* Brand Logo - Click to go to Dashboard */}
                 <button
@@ -33,18 +33,18 @@ export const Header = ({
                     <div className="w-8 h-8 rounded-lg bg-primary text-on-primary flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
                         <BoltIcon filled className="text-lg" />
                     </div>
-                    <div className="flex flex-col">
+                    <div className="header-brand-text flex flex-col">
             <span className="font-headline-sm text-headline-sm font-semibold tracking-tight text-primary leading-none">
               SmartEnergy AI
             </span>
-                        <span className="font-label-sm text-label-sm text-secondary font-medium tracking-wider">
+                        <span className="header-brand-tagline font-label-sm text-label-sm text-secondary font-medium tracking-wider">
               PRECISION TELEMETRY
             </span>
                     </div>
                 </button>
 
                 {/* Desktop Navigation Links */}
-                <nav className="hidden md:flex items-center gap-8">
+                <nav className="header-nav hidden md:flex items-center gap-8">
                     {navLinks.map((link) => (
                         <a
                             key={link.label}
@@ -58,18 +58,18 @@ export const Header = ({
                 </nav>
 
                 {/* Right Action CTAs */}
-                <div className="flex items-center gap-3">
+                <div className="header-actions flex items-center gap-3">
                     <button
-                        className="px-3.5 py-1.5 rounded-lg border border-outline-variant bg-surface-container-lowest text-primary font-label-md text-label-md hover:bg-surface-container-low transition-colors btn-premium"
+                        className="header-sign-in px-3.5 py-1.5 rounded-lg border border-outline-variant bg-surface-container-lowest text-primary font-label-md text-label-md hover:bg-surface-container-low transition-colors btn-premium"
                         onClick={onSignIn}
                     >
                         Sign In
                     </button>
                     <button
-                        className="btn-premium px-3.5 py-1.5 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-medium hover:bg-primary-container transition-colors flex items-center gap-1.5"
+                        className="header-cta-btn btn-premium px-3.5 py-1.5 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-medium hover:bg-primary-container transition-colors flex items-center gap-1.5"
                         onClick={onGetStarted}
                     >
-                        <span>Get Started Free</span>
+                        <span className="header-cta-label">Get Started Free</span>
                         <span className="material-symbols-outlined text-sm">arrow_forward</span>
                     </button>
                 </div>

@@ -27,7 +27,7 @@ export const Household = () => {
     return (
         <div className="space-y-6">
             {/* Header / Welcome */}
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-2">
+            <div className="page-header-row flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-2">
                 <div>
                     <h1 className="font-headline-lg text-headline-lg font-semibold text-primary tracking-tight">
                         Household Management
@@ -36,7 +36,7 @@ export const Household = () => {
                         Manage members, connected devices, and load-shedding parameters
                     </p>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="page-header-actions flex items-center gap-3">
                     <button className="h-9 px-4 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-medium hover:bg-on-surface-variant transition-colors inline-flex items-center gap-2 shadow-sm">
                         <span className="material-symbols-outlined text-[18px]">add</span>
                         Add Member
@@ -46,7 +46,7 @@ export const Household = () => {
 
             {/* Members Section */}
             <div className="border border-outline-variant rounded-xl p-6 bg-surface-container-lowest">
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
                     <h3 className="font-headline-sm text-headline-sm font-semibold text-primary">Household Access & Roles</h3>
                     <span className="font-label-sm text-label-sm text-secondary uppercase tracking-wider">
                         {members.length} Registered Users
@@ -54,7 +54,7 @@ export const Household = () => {
                 </div>
                 <div className="divide-y divide-outline-variant">
                     {members.map((m) => (
-                        <div key={m.id} className="py-3 flex items-center justify-between">
+                        <div key={m.id} className="member-row py-3 flex items-center justify-between">
                             <div className="flex items-center gap-3">
                                 <div className="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center font-semibold text-primary">
                                     {m.name.charAt(0)}
@@ -79,7 +79,7 @@ export const Household = () => {
 
             {/* Smart Connected Appliances Section */}
             <div className="border border-outline-variant rounded-xl p-6 bg-surface-container-lowest">
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
                     <div>
                         <h3 className="font-headline-sm text-headline-sm font-semibold text-primary">Connected Smart Appliances</h3>
                         <p className="font-body-sm text-body-sm text-secondary mt-0.5">Automated shedding controls for peak tariff periods</p>
@@ -90,7 +90,7 @@ export const Household = () => {
                     </button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <div className="appliance-grid grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                     {appliances.map((app) => (
                         <div key={app.id} className="p-4 rounded-xl border border-outline-variant/60 bg-surface-container-lowest flex flex-col justify-between space-y-4">
                             <div className="flex items-start justify-between">

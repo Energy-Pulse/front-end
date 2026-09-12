@@ -17,6 +17,7 @@ const navItems = [
 
 export const Dashboard = ({ user, onNavigate, currentPage = 'dashboard', onBackToHome }) => {
     const [timeRange, setTimeRange] = useState('daily');
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
     const metrics = {
         today: 12.8,
@@ -38,6 +39,16 @@ export const Dashboard = ({ user, onNavigate, currentPage = 'dashboard', onBackT
     };
 
     const headerInfo = getHeaderInfo();
+
+    const handleNavClick = (id) => {
+        onNavigate?.(id);
+        setSidebarOpen(false); // auto-close drawer on mobile after navigating
+    };
+
+    const handleExit = () => {
+        setSidebarOpen(false);
+        onBackToHome?.();
+    };
 
     const renderPage = () => {
         switch (currentPage) {
@@ -65,18 +76,41 @@ export const Dashboard = ({ user, onNavigate, currentPage = 'dashboard', onBackT
 
     return (
         <div className="flex min-h-screen bg-surface-container-lowest">
+            {/* Mobile Backdrop (only when drawer is open) */}
+            {sidebarOpen && (
+                <div
+                    className="fixed inset-0 bg-black/40 z-40 md:hidden"
+                    onClick={() => setSidebarOpen(false)}
+                    aria-hidden="true"
+                />
+            )}
+
             {/* Sidebar */}
-            <aside className="fixed top-0 left-0 bottom-0 w-64 flex flex-col justify-between p-4 border-r border-outline-variant z-40 bg-surface-container-lowest">
+            <aside
+                className={`dashboard-sidebar fixed top-0 left-0 bottom-0 w-64 flex flex-col justify-between p-4 border-r border-outline-variant z-50 bg-surface-container-lowest ${
+                    sidebarOpen ? 'is-open' : ''
+                }`}
+            >
                 <div className="flex flex-col gap-6">
                     {/* Brand */}
-                    <div className="px-3 pt-2 flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-primary text-on-primary flex items-center justify-center">
-                            <span className="material-symbols-outlined text-[20px]">bolt</span>
+                    <div className="sidebar-brand-row px-3 pt-2 flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-primary text-on-primary flex items-center justify-center flex-shrink-0">
+                                <span className="material-symbols-outlined text-[20px]">bolt</span>
+                            </div>
+                            <div className="sidebar-label-text">
+                                <h1 className="font-headline-sm text-headline-sm font-semibold text-primary tracking-tight">SmartEnergy AI</h1>
+                                <p className="font-label-sm text-label-sm text-secondary font-medium">Precision Telemetry</p>
+                            </div>
                         </div>
-                        <div>
-                            <h1 className="font-headline-sm text-headline-sm font-semibold text-primary tracking-tight">SmartEnergy AI</h1>
-                            <p className="font-label-sm text-label-sm text-secondary font-medium">Precision Telemetry</p>
-                        </div>
+                        {/* Close button (mobile only) */}
+                        <button
+                            className="md:hidden text-secondary hover:text-primary p-1 flex-shrink-0"
+                            onClick={() => setSidebarOpen(false)}
+                            aria-label="Close sidebar"
+                        >
+                            <span className="material-symbols-outlined text-[22px]">close</span>
+                        </button>
                     </div>
 
                     {/* Navigation */}
@@ -89,57 +123,65 @@ export const Dashboard = ({ user, onNavigate, currentPage = 'dashboard', onBackT
                                         ? 'bg-surface-container-low text-primary font-semibold'
                                         : 'text-secondary hover:text-primary hover:bg-surface-container-low'
                                 }`}
-                                onClick={() => onNavigate?.(item.id)}
+                                onClick={() => handleNavClick(item.id)}
                             >
-                                <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
-                                <span>{item.label}</span>
+                                <span className="material-symbols-outlined text-[20px] flex-shrink-0">{item.icon}</span>
+                                <span className="sidebar-label-text">{item.label}</span>
                             </button>
                         ))}
                     </nav>
                 </div>
 
-                {/* Sidebar Footer */}
-                <div className="pt-4 border-t border-outline-variant flex flex-col gap-2">
-                    <button
-                        className="flex items-center gap-2 px-3 py-2 text-secondary hover:text-primary hover:bg-surface-container-low rounded-lg transition-colors w-full text-left font-label-md text-label-md"
-                        onClick={onBackToHome}
-                    >
-                        <span className="material-symbols-outlined text-[20px]">arrow_back</span>
-                        <span>Back to Home</span>
-                    </button>
-
-                    <div className="flex items-center justify-between px-2 py-2">
-                        <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-primary font-semibold">
+                {/* Sidebar Footer — user row with integrated Exit button */}
+                <div className="pt-4 border-t border-outline-variant">
+                    <div className="sidebar-footer-user flex items-center justify-between gap-2 px-2 py-2">
+                        <div className="flex items-center gap-3 min-w-0 flex-1">
+                            <div className="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-primary font-semibold flex-shrink-0">
                                 {user?.name?.charAt(0) || 'U'}
                             </div>
-                            <div>
-                                <div className="font-label-md text-label-md font-semibold text-primary">{user?.name || 'User'}</div>
-                                <div className="font-body-sm text-body-sm text-secondary">Household Admin</div>
+                            <div className="sidebar-label-text min-w-0">
+                                <div className="font-label-md text-label-md font-semibold text-primary truncate">
+                                    {user?.name || 'User'}
+                                </div>
+                                <div className="font-body-sm text-body-sm text-secondary truncate">Household Admin</div>
                             </div>
                         </div>
-                        <button className="text-secondary hover:text-primary transition-colors" title="Logout">
+                        <button
+                            onClick={handleExit}
+                            className="sidebar-exit-btn flex items-center justify-center gap-1.5 p-2 rounded-lg text-secondary hover:text-primary hover:bg-surface-container-low transition-colors flex-shrink-0"
+                            title="Back to Home"
+                            aria-label="Back to Home"
+                        >
                             <span className="material-symbols-outlined text-[20px]">logout</span>
+                            <span className="sidebar-exit-label hidden">Exit</span>
                         </button>
                     </div>
                 </div>
             </aside>
 
             {/* Main Section */}
-            <main className="ml-64 flex-1 min-h-screen">
+            <main className="dashboard-main ml-64 flex-1 min-h-screen">
                 {/* Header */}
-                <header className="sticky top-0 z-30 h-16 px-6 flex justify-between items-center bg-surface-container-lowest border-b border-outline-variant">
+                <header className="dashboard-top-header sticky top-0 z-30 h-16 px-6 flex justify-between items-center bg-surface-container-lowest border-b border-outline-variant">
                     <div className="flex items-center gap-4">
+                        {/* Hamburger — visible only ≤768px */}
+                        <button
+                            className="dashboard-mobile-toggle hidden items-center justify-center p-2 rounded-lg text-secondary hover:text-primary hover:bg-surface-container-low transition-colors"
+                            onClick={() => setSidebarOpen(true)}
+                            aria-label="Open sidebar"
+                        >
+                            <span className="material-symbols-outlined text-[22px]">menu</span>
+                        </button>
                         <h2 className="font-headline-md text-headline-md font-semibold text-primary">
                             {headerInfo.title}
                         </h2>
-                        <div className="h-4 w-px bg-outline-variant"></div>
-                        <span className="font-label-sm text-label-sm uppercase tracking-wider text-secondary">
+                        <div className="h-4 w-px bg-outline-variant hidden sm:block"></div>
+                        <span className="font-label-sm text-label-sm uppercase tracking-wider text-secondary hidden sm:inline">
                             {headerInfo.subtitle}
                         </span>
                     </div>
-                    <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-outline-variant bg-surface-container-lowest text-primary text-label-md font-medium hover:bg-surface-container-low transition-colors cursor-pointer">
+                    <div className="dashboard-header-meta flex items-center gap-4">
+                        <div className="dashboard-date-pill flex items-center gap-2 px-3 py-1.5 rounded-lg border border-outline-variant bg-surface-container-lowest text-primary text-label-md font-medium hover:bg-surface-container-low transition-colors cursor-pointer">
                             <span className="material-symbols-outlined text-[18px] text-secondary">calendar_today</span>
                             <span>Sep 01 - Sep 07, 2026</span>
                         </div>
@@ -160,7 +202,6 @@ export const Dashboard = ({ user, onNavigate, currentPage = 'dashboard', onBackT
 
 // Subcomponent: Dashboard Main Overview View
 const DashboardContent = ({ metrics, timeRange, setTimeRange, user }) => {
-    // Different data for each time range
     const chartDataMap = {
         daily: [
             { date: '00:00', actual: 8.4 },
@@ -192,7 +233,7 @@ const DashboardContent = ({ metrics, timeRange, setTimeRange, user }) => {
 
     return (
         <>
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="page-header-row flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
                     <h1 className="font-headline-lg text-headline-lg font-semibold text-primary tracking-tight">
                         Good evening, {user?.name || 'User'}
@@ -201,7 +242,7 @@ const DashboardContent = ({ metrics, timeRange, setTimeRange, user }) => {
                         Your household energy overview and ML-powered forecast
                     </p>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="page-header-actions flex items-center gap-3">
                     <button className="h-9 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-primary font-label-md text-label-md font-medium hover:bg-surface-container-low transition-colors inline-flex items-center gap-2 btn-premium">
                         <span className="material-symbols-outlined text-[18px]">download</span>
                         Export
@@ -213,18 +254,17 @@ const DashboardContent = ({ metrics, timeRange, setTimeRange, user }) => {
                 </div>
             </div>
 
-            {/* KPI Cards with Modern styling */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="p-5 rounded-xl border border-outline-variant bg-surface-container-lowest card-hover">
+            <div className="kpi-grid-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="kpi-card p-5 rounded-xl border border-outline-variant bg-surface-container-lowest card-hover">
                     <div className="flex items-center justify-between">
-                        <span className="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Today's Usage</span>
+                        <span className="kpi-card-title font-label-sm text-label-sm text-secondary uppercase tracking-wider">Today's Usage</span>
                         <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
                             <span className="material-symbols-outlined text-[12px]">trending_up</span>
                             +2.4%
                         </span>
                     </div>
                     <div className="mt-2 flex items-baseline gap-2">
-                        <span className="font-display-kpi text-display-kpi text-primary tracking-tight">{metrics.today}</span>
+                        <span className="kpi-card-value font-display-kpi text-display-kpi text-primary tracking-tight">{metrics.today}</span>
                         <span className="font-headline-sm text-headline-sm text-secondary font-normal">kWh</span>
                     </div>
                     <p className="font-body-sm text-body-sm text-secondary mt-1 flex items-center gap-1">
@@ -233,16 +273,16 @@ const DashboardContent = ({ metrics, timeRange, setTimeRange, user }) => {
                     </p>
                 </div>
 
-                <div className="p-5 rounded-xl border border-outline-variant bg-surface-container-lowest card-hover">
+                <div className="kpi-card p-5 rounded-xl border border-outline-variant bg-surface-container-lowest card-hover">
                     <div className="flex items-center justify-between">
-                        <span className="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Predicted</span>
+                        <span className="kpi-card-title font-label-sm text-label-sm text-secondary uppercase tracking-wider">Predicted</span>
                         <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
                             <span className="material-symbols-outlined text-[12px]">warning</span>
                             High Usage
                         </span>
                     </div>
                     <div className="mt-2 flex items-baseline gap-2">
-                        <span className="font-display-kpi text-display-kpi text-primary tracking-tight">{metrics.predicted}</span>
+                        <span className="kpi-card-value font-display-kpi text-display-kpi text-primary tracking-tight">{metrics.predicted}</span>
                         <span className="font-headline-sm text-headline-sm text-secondary font-normal">kWh</span>
                     </div>
                     <p className="font-body-sm text-body-sm text-secondary mt-1 flex items-center gap-1">
@@ -251,16 +291,16 @@ const DashboardContent = ({ metrics, timeRange, setTimeRange, user }) => {
                     </p>
                 </div>
 
-                <div className="p-5 rounded-xl border border-outline-variant bg-surface-container-lowest card-hover">
+                <div className="kpi-card p-5 rounded-xl border border-outline-variant bg-surface-container-lowest card-hover">
                     <div className="flex items-center justify-between">
-                        <span className="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Average</span>
+                        <span className="kpi-card-title font-label-sm text-label-sm text-secondary uppercase tracking-wider">Average</span>
                         <span className="inline-flex items-center gap-1 text-xs font-medium text-secondary bg-surface-container-low px-2 py-0.5 rounded-full border border-outline-variant">
                             <span className="material-symbols-outlined text-[12px]">trending_down</span>
                             -1.8%
                         </span>
                     </div>
                     <div className="mt-2 flex items-baseline gap-2">
-                        <span className="font-display-kpi text-display-kpi text-primary tracking-tight">{metrics.average}</span>
+                        <span className="kpi-card-value font-display-kpi text-display-kpi text-primary tracking-tight">{metrics.average}</span>
                         <span className="font-headline-sm text-headline-sm text-secondary font-normal">kWh</span>
                     </div>
                     <p className="font-body-sm text-body-sm text-secondary mt-1 flex items-center gap-1">
@@ -269,13 +309,13 @@ const DashboardContent = ({ metrics, timeRange, setTimeRange, user }) => {
                     </p>
                 </div>
 
-                <div className="p-5 rounded-xl border border-outline-variant bg-surface-container-lowest card-hover">
+                <div className="kpi-card p-5 rounded-xl border border-outline-variant bg-surface-container-lowest card-hover">
                     <div className="flex items-center justify-between">
-                        <span className="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Monthly</span>
+                        <span className="kpi-card-title font-label-sm text-label-sm text-secondary uppercase tracking-wider">Monthly</span>
                         <span className="text-xs font-medium text-secondary">Target: 420</span>
                     </div>
                     <div className="mt-2 flex items-baseline gap-2">
-                        <span className="font-display-kpi text-display-kpi text-primary tracking-tight">{metrics.monthly}</span>
+                        <span className="kpi-card-value font-display-kpi text-display-kpi text-primary tracking-tight">{metrics.monthly}</span>
                         <span className="font-headline-sm text-headline-sm text-secondary font-normal">kWh</span>
                     </div>
                     <div className="mt-2">
@@ -293,9 +333,8 @@ const DashboardContent = ({ metrics, timeRange, setTimeRange, user }) => {
                 </div>
             </div>
 
-            {/* Chart Section with Modern Chart */}
             <div className="border border-outline-variant rounded-xl p-6 bg-surface-container-lowest card-hover-glow">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-outline-variant">
+                <div className="chart-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-outline-variant">
                     <div>
                         <h3 className="font-headline-sm text-headline-sm font-semibold text-primary">Consumption Overview</h3>
                         <p className="font-body-sm text-body-sm text-secondary mt-0.5 flex items-center gap-1">
@@ -303,8 +342,8 @@ const DashboardContent = ({ metrics, timeRange, setTimeRange, user }) => {
                             {timeRange === 'daily' ? '24h' : timeRange === 'weekly' ? '7 days' : '4 weeks'} telemetry tracking
                         </p>
                     </div>
-                    <div className="flex items-center gap-3">
-                        <div className="flex p-0.5 rounded-lg border border-outline-variant bg-surface-container-low">
+                    <div className="flex items-center gap-3 flex-wrap">
+                        <div className="filter-chip-row flex p-0.5 rounded-lg border border-outline-variant bg-surface-container-low">
                             {['daily', 'weekly', 'monthly'].map((range) => (
                                 <button
                                     key={range}

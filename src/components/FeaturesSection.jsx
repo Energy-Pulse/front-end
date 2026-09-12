@@ -46,11 +46,11 @@ export const FeaturesSection = () => {
                         Deterministic energy accounting paired with probabilistic ML regressors.
                     </p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="features-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {features.map((feature, index) => (
                         <div
                             key={index}
-                            className="p-6 rounded-xl border border-outline-variant/40 glass-image hover:border-primary/60 transition-colors card-hover"
+                            className="feature-card p-6 rounded-xl border border-outline-variant/40 glass-image hover:border-primary/60 transition-colors card-hover"
                         >
                             <div>
                                 <div className="icon-glow w-10 h-10 rounded-lg bg-surface-container-low/80 backdrop-blur-sm border border-outline-variant/40 flex items-center justify-center mb-5">
@@ -63,7 +63,7 @@ export const FeaturesSection = () => {
                                     {feature.description}
                                 </p>
                             </div>
-                            <div className="mt-6 pt-4 border-t border-outline-variant/40 font-label-sm text-label-sm text-secondary flex items-center justify-between">
+                            <div className="feature-meta mt-6 pt-4 border-t border-outline-variant/40 font-label-sm text-label-sm text-secondary flex items-center justify-between">
                                 <span>{feature.metric}</span>
                                 <span className="font-semibold text-primary metric-value">{feature.value}</span>
                             </div>

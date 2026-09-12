@@ -1,8 +1,8 @@
 export const BenchmarksTable = ({ data }) => {
     return (
-        <div className="border border-outline-variant rounded-xl overflow-hidden shadow-sm table-premium">
+        <div className="benchmarks-wrapper border border-outline-variant rounded-xl overflow-hidden shadow-sm table-premium">
             <div className="overflow-x-auto">
-                <table className="w-full text-left font-body-sm text-body-sm border-collapse">
+                <table className="benchmarks-table w-full text-left font-body-sm text-body-sm border-collapse">
                     <thead>
                     <tr className="bg-surface-container-low border-b border-outline-variant font-label-sm text-label-sm text-secondary">
                         <th className="py-3.5 px-5 font-semibold text-primary">Model Architecture</th>
@@ -24,7 +24,7 @@ export const BenchmarksTable = ({ data }) => {
                                     />
                                 <span>{model.name}</span>
                                 {model.isBest && (
-                                    <span className="ml-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
+                                    <span className="benchmarks-card-badge ml-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
                                             Best
                                         </span>
                                 )}

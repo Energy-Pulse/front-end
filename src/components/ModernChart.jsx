@@ -64,9 +64,9 @@ export const ModernChart = ({
     if (!data || data.length === 0) return null;
 
     return (
-        <div className="w-full h-full">
+        <div className="chart-wrapper w-full h-full">
             <svg
-                className="w-full h-full overflow-visible"
+                className="chart-svg w-full h-full overflow-visible"
                 viewBox={`0 0 ${chartData.chartWidth} ${chartData.chartHeight}`}
                 style={{ fontFamily: 'Inter, sans-serif' }}
             >

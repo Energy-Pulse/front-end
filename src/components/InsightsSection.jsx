@@ -40,11 +40,11 @@ export const InsightsSection = () => {
                         Our platform processes millions of data points to deliver insights that drive real savings.
                     </p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="insights-grid grid grid-cols-1 md:grid-cols-3 gap-6">
                     {insights.map((item, index) => (
                         <div
                             key={index}
-                            className="glass-image rounded-xl p-8 border border-outline-variant/40 card-hover"
+                            className="insight-card glass-image rounded-xl p-8 border border-outline-variant/40 card-hover"
                         >
                             <div className="w-12 h-12 rounded-full bg-surface-container-low flex items-center justify-center mb-5">
                                 <span className="material-symbols-outlined text-2xl text-primary">{item.icon}</span>

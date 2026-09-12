@@ -15,7 +15,7 @@ export const Background = ({
     };
 
     return (
-        <div className={`${variants[variant] || variants.default} ${className} relative min-h-screen`}>
+        <div className={`${variants[variant] || variants.default} ${className} relative min-h-screen flex flex-col`}>
             {children}
         </div>
     );
