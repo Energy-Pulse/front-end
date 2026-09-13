@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { Modal } from './Modal';
 import { GoogleIcon } from './Icons';
+import { registerUser } from '../services/authApi';
 
-export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }) => {
+export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, onRegister }) => {
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
@@ -11,6 +12,8 @@ export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }) => {
         hvacType: 'central-ac',
         termsAccepted: false,
     });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     // --- Auto-hide Scrollbar Logic ---
     const [isScrolling, setIsScrolling] = useState(false);
@@ -42,9 +45,23 @@ export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }) => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Registration attempt:', formData);
+        setErrorMessage('');
+
+        try {
+            setIsSubmitting(true);
+            const response = await registerUser(formData);
+
+            if (onRegister) {
+                onRegister(response);
+            }
+            onClose();
+        } catch (error) {
+            setErrorMessage(error.message || 'Registration failed. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -187,11 +204,18 @@ export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }) => {
                     </label>
                 </div>
 
+                {errorMessage && (
+                    <div className="rounded-lg border border-red-500/30 bg-red-50 px-3 py-2 text-sm text-red-700">
+                        {errorMessage}
+                    </div>
+                )}
+
                 <button
-                    className="w-full h-10 mt-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-medium hover:bg-primary-container transition-colors flex items-center justify-center gap-2"
+                    className="w-full h-10 mt-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-medium hover:bg-primary-container transition-colors flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                     type="submit"
+                    disabled={isSubmitting}
                 >
-                    <span>Create Account & Connect Telemetry</span>
+                    <span>{isSubmitting ? 'Creating account...' : 'Create Account & Connect Telemetry'}</span>
                     <span className="material-symbols-outlined text-base">cloud_sync</span>
                 </button>
             </form>

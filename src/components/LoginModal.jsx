@@ -1,15 +1,37 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import { Modal } from './Modal';
 import { GoogleIcon } from './Icons';
+import { loginUser } from '../services/authApi';
 
-export const LoginModal = ({ isOpen, onClose, onSwitchToRegister }) => {
+export const LoginModal = ({ isOpen, onClose, onSwitchToRegister, onLogin }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(true);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Login attempt:', { email, password, rememberMe });
+        setErrorMessage('');
+
+        try {
+            setIsSubmitting(true);
+            const response = await loginUser({ email, password });
+
+            if (rememberMe) {
+                localStorage.setItem('smartEnergyToken', response.token);
+                localStorage.setItem('smartEnergyUserId', String(response.userId));
+            }
+
+            if (onLogin) {
+                onLogin(response);
+            }
+            onClose();
+        } catch (error) {
+            setErrorMessage(error.message || 'Login failed. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -93,11 +115,18 @@ export const LoginModal = ({ isOpen, onClose, onSwitchToRegister }) => {
                     </label>
                 </div>
 
+                {errorMessage && (
+                    <div className="rounded-lg border border-red-500/30 bg-red-50 px-3 py-2 text-sm text-red-700">
+                        {errorMessage}
+                    </div>
+                )}
+
                 <button
-                    className="w-full h-10 mt-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-medium hover:bg-primary-container transition-colors flex items-center justify-center gap-2"
+                    className="w-full h-10 mt-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-medium hover:bg-primary-container transition-colors flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                     type="submit"
+                    disabled={isSubmitting}
                 >
-                    <span>Sign In</span>
+                    <span>{isSubmitting ? 'Signing in...' : 'Sign In'}</span>
                     <span className="material-symbols-outlined text-base">arrow_forward</span>
                 </button>
             </form>
