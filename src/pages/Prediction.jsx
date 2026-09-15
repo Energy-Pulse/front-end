@@ -1,18 +1,29 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { predictConsumption } from '../services/predictionApi';
 import { ErrorMessage } from '../components/ErrorMessage.jsx';
 
-const todayISO = () => new Date().toISOString().split('T')[0];
+// Helpers — always use "now" at the moment of submission
+const todayISO = () => new Date().toISOString().split('T')[0]; // YYYY-MM-DD
 const nowHHMM = () => {
     const d = new Date();
     return `${String(d.getHours()).padStart(2, '0')}:${String(
         d.getMinutes()
-    ).padStart(2, '0')}`;
+    ).padStart(2, '0')}`; // HH:MM
+};
+const prettyNow = () => {
+    const d = new Date();
+    return d.toLocaleString('en-GB', {
+        weekday: 'short',
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+    });
 };
 
+// date/time no longer held in the form — captured live at submit
 const INITIAL_FORM = {
-    date: todayISO(),
-    time: nowHHMM(),
     district: '',
     province: '',
     temperatureC: '',
@@ -57,6 +68,12 @@ export const Predictions = () => {
     // ✅ Simple error string for the UI banner
     const [apiError, setApiError] = useState('');
 
+    // Live "now" display — recomputes on every render
+    const nowDisplay = useMemo(
+        () => prettyNow(),
+        [form, result, apiError, isRunning]
+    );
+
     const handleChange = (e) => {
         const { name, value } = e.target;
 
@@ -85,8 +102,6 @@ export const Predictions = () => {
     const validate = () => {
         const errs = {};
 
-        if (!form.date) errs.date = 'Date is required.';
-        if (!form.time) errs.time = 'Time is required.';
         if (!form.province?.trim()) errs.province = 'Province is required.';
         if (!form.district?.trim()) errs.district = 'District is required.';
 
@@ -137,9 +152,10 @@ export const Predictions = () => {
         setIsRunning(true);
         setResult(null);
 
+        // ✅ date/time captured here — uses current moment
         const payload = {
-            date: form.date,
-            time: form.time,
+            date: todayISO(),
+            time: nowHHMM(),
             district: form.district,
             province: form.province,
             temperatureC: Number(form.temperatureC),
@@ -164,10 +180,7 @@ export const Predictions = () => {
                 monthlyKwh: data.monthlyPredictedConsumptionKwhAmount,
             });
         } catch (err) {
-            // Full details go to the console for debugging…
             console.error('[Predictions] error:', err);
-
-            // …but the user only sees a short, friendly message.
             setApiError('Something went wrong. Please try again.');
         } finally {
             setIsRunning(false);
@@ -228,7 +241,7 @@ export const Predictions = () => {
                     onSubmit={handleRunForecast}
                     className="lg:col-span-2 border border-outline-variant rounded-xl p-6 bg-surface-container-lowest space-y-6"
                 >
-                    {/* Date & Time */}
+                    {/* Date & Time — read-only display */}
                     <div>
                         <h3 className="font-headline-sm text-headline-sm font-semibold text-primary mb-4 flex items-center gap-2">
                             <span className="material-symbols-outlined text-[20px] text-primary/70">
@@ -237,43 +250,25 @@ export const Predictions = () => {
                             Date &amp; Time
                         </h3>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="flex items-center justify-between gap-4 p-3 rounded-lg border border-outline-variant bg-surface-container-low/60">
                             <div>
-                                <label className="block font-label-sm text-label-sm font-medium text-secondary mb-1">
-                                    Date <span className="text-red-500">*</span>
-                                </label>
-                                <input
-                                    type="date"
-                                    name="date"
-                                    value={form.date}
-                                    onChange={handleChange}
-                                    className={inputClass('date')}
-                                />
-                                {errors.date && (
-                                    <p className="font-body-sm text-body-sm text-red-600 mt-1">
-                                        {errors.date}
-                                    </p>
-                                )}
+                                <div className="font-label-sm text-label-sm text-secondary uppercase tracking-wider">
+                                    Current Timestamp
+                                </div>
+                                <div className="font-label-md text-label-md font-semibold text-primary mt-0.5">
+                                    {nowDisplay}
+                                </div>
                             </div>
 
-                            <div>
-                                <label className="block font-label-sm text-label-sm font-medium text-secondary mb-1">
-                                    Time <span className="text-red-500">*</span>
-                                </label>
-                                <input
-                                    type="time"
-                                    name="time"
-                                    value={form.time}
-                                    onChange={handleChange}
-                                    className={inputClass('time')}
-                                />
-                                {errors.time && (
-                                    <p className="font-body-sm text-body-sm text-red-600 mt-1">
-                                        {errors.time}
-                                    </p>
-                                )}
-                            </div>
+                            <span className="material-symbols-outlined text-primary/60 text-[22px]">
+                                schedule
+                            </span>
                         </div>
+
+                        <p className="font-body-sm text-body-sm text-secondary mt-2">
+                            Predictions are timestamped automatically with the
+                            current date and time.
+                        </p>
                     </div>
 
                     {/* Location */}
