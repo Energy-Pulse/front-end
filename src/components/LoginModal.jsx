@@ -38,13 +38,13 @@ export const LoginModal = ({ isOpen, onClose, onSwitchToRegister, onLogin }) => 
         <Modal isOpen={isOpen} onClose={onClose}>
             <div className="flex items-center gap-2 mb-2">
                 <div className="w-7 h-7 rounded-lg bg-primary text-on-primary flex items-center justify-center">
-          <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>
-            bolt
-          </span>
+                    <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>
+                        bolt
+                    </span>
                 </div>
                 <span className="font-headline-sm text-headline-sm font-semibold text-primary">
-          SmartEnergy AI
-        </span>
+                    SmartEnergy AI
+                </span>
             </div>
             <h3 className="font-headline-md text-headline-md font-bold text-primary mt-3">
                 Sign in to SmartEnergy AI
@@ -65,8 +65,8 @@ export const LoginModal = ({ isOpen, onClose, onSwitchToRegister, onLogin }) => 
             <div className="relative flex py-2 items-center mb-4">
                 <div className="flex-grow border-t border-outline-variant" />
                 <span className="flex-shrink mx-3 font-label-sm text-label-sm text-secondary uppercase tracking-wider">
-          or continue with email
-        </span>
+                    or continue with email
+                </span>
                 <div className="flex-grow border-t border-outline-variant" />
             </div>
 

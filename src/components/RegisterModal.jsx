@@ -16,7 +16,7 @@ export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, onRegister }) 
     const [errorMessage, setErrorMessage] = useState('');
 
     // --- Auto-hide Scrollbar Logic ---
-    const [isScrolling, setIsScrolling] = useState(false);
+    const [setIsScrolling] = useState(false);
     const scrollTimeoutRef = useRef(null);
 
     const handleScroll = () => {
@@ -26,7 +26,7 @@ export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, onRegister }) 
         }
         scrollTimeoutRef.current = setTimeout(() => {
             setIsScrolling(false);
-        }, 1000); // Fades out 1 second after scrolling stops
+        }, 1000);
     };
 
     useEffect(() => {
@@ -52,6 +52,12 @@ export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, onRegister }) 
         try {
             setIsSubmitting(true);
             const response = await registerUser(formData);
+
+            // Persist token/userId (same keys as login)
+            if (response.token) {
+                localStorage.setItem('smartEnergyToken', response.token);
+                localStorage.setItem('smartEnergyUserId', String(response.userId));
+            }
 
             if (onRegister) {
                 onRegister(response);

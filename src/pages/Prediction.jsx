@@ -1,7 +1,18 @@
 import { useState } from 'react';
+import { predictConsumption } from '../services/predictionApi';
+import { ErrorMessage } from '../components/ErrorMessage.jsx';
 
-// Field-level constraints mirrored from the Spring Boot DTO
+const todayISO = () => new Date().toISOString().split('T')[0];
+const nowHHMM = () => {
+    const d = new Date();
+    return `${String(d.getHours()).padStart(2, '0')}:${String(
+        d.getMinutes()
+    ).padStart(2, '0')}`;
+};
+
 const INITIAL_FORM = {
+    date: todayISO(),
+    time: nowHHMM(),
     district: '',
     province: '',
     temperatureC: '',
@@ -10,6 +21,7 @@ const INITIAL_FORM = {
     householdSize: '',
     acUsage: 0,
     fanUsage: 0,
+    workFromHome: 0,
 };
 
 const PROVINCES = [
@@ -28,13 +40,7 @@ const DISTRICTS_BY_PROVINCE = {
     Western: ['Colombo', 'Gampaha', 'Kalutara'],
     Central: ['Kandy', 'Matale', 'Nuwara Eliya'],
     Southern: ['Galle', 'Matara', 'Hambantota'],
-    Northern: [
-        'Jaffna',
-        'Kilinochchi',
-        'Mannar',
-        'Mullaitivu',
-        'Vavuniya',
-    ],
+    Northern: ['Jaffna', 'Kilinochchi', 'Mannar', 'Mullaitivu', 'Vavuniya'],
     Eastern: ['Trincomalee', 'Batticaloa', 'Ampara'],
     'North Western': ['Kurunegala', 'Puttalam'],
     'North Central': ['Anuradhapura', 'Polonnaruwa'],
@@ -48,33 +54,21 @@ export const Predictions = () => {
     const [isRunning, setIsRunning] = useState(false);
     const [result, setResult] = useState(null);
 
+    // ✅ Simple error string for the UI banner
+    const [apiError, setApiError] = useState('');
+
     const handleChange = (e) => {
         const { name, value } = e.target;
 
         setForm((prev) => {
-            // If province changes, clear district because the old
-            // district may not belong to the new province.
             if (name === 'province') {
-                return {
-                    ...prev,
-                    province: value,
-                    district: '',
-                };
+                return { ...prev, province: value, district: '' };
             }
-
-            return {
-                ...prev,
-                [name]: value,
-            };
+            return { ...prev, [name]: value };
         });
 
-        // Clear field error when editing
-        setErrors((prev) => ({
-            ...prev,
-            [name]: undefined,
-        }));
+        setErrors((prev) => ({ ...prev, [name]: undefined }));
 
-        // Clear district error when province changes
         if (name === 'province') {
             setErrors((prev) => ({
                 ...prev,
@@ -85,49 +79,33 @@ export const Predictions = () => {
     };
 
     const handleToggle = (name) => {
-        setForm((prev) => ({
-            ...prev,
-            [name]: prev[name] ? 0 : 1,
-        }));
+        setForm((prev) => ({ ...prev, [name]: prev[name] ? 0 : 1 }));
     };
 
-    // Client-side validation mirroring the DTO constraints
     const validate = () => {
         const errs = {};
 
-        if (!form.province?.trim()) {
-            errs.province = 'Province is required.';
-        }
-
-        if (!form.district?.trim()) {
-            errs.district = 'District is required.';
-        }
+        if (!form.date) errs.date = 'Date is required.';
+        if (!form.time) errs.time = 'Time is required.';
+        if (!form.province?.trim()) errs.province = 'Province is required.';
+        if (!form.district?.trim()) errs.district = 'District is required.';
 
         const temp = Number(form.temperatureC);
-
-        if (
-            form.temperatureC === '' ||
-            Number.isNaN(temp) ||
-            temp <= 0
-        ) {
-            errs.temperatureC =
-                'Temperature must be a positive number.';
+        if (form.temperatureC === '' || Number.isNaN(temp) || temp <= 0) {
+            errs.temperatureC = 'Temperature must be a positive number.';
         }
 
         const humidity = Number(form.humidityPct);
-
         if (
             form.humidityPct === '' ||
             Number.isNaN(humidity) ||
             humidity < 0 ||
             humidity > 100
         ) {
-            errs.humidityPct =
-                'Humidity must be between 0 and 100.';
+            errs.humidityPct = 'Humidity must be between 0 and 100.';
         }
 
         const prevKwh = Number(form.previousConsumptionKwh);
-
         if (
             form.previousConsumptionKwh === '' ||
             Number.isNaN(prevKwh) ||
@@ -138,107 +116,59 @@ export const Predictions = () => {
         }
 
         const size = Number(form.householdSize);
-
         if (
             form.householdSize === '' ||
             !Number.isInteger(size) ||
             size < 1
         ) {
-            errs.householdSize =
-                'Household size must be at least 1.';
+            errs.householdSize = 'Household size must be at least 1.';
         }
 
         setErrors(errs);
-
         return Object.keys(errs).length === 0;
     };
 
     const handleRunForecast = async (e) => {
         e.preventDefault();
+        setApiError('');
 
-        if (!validate()) {
-            return;
-        }
+        if (!validate()) return;
 
         setIsRunning(true);
         setResult(null);
 
         const payload = {
+            date: form.date,
+            time: form.time,
             district: form.district,
             province: form.province,
             temperatureC: Number(form.temperatureC),
             humidityPct: Number(form.humidityPct),
-            previousConsumptionKwh: Number(
-                form.previousConsumptionKwh
-            ),
+            previousConsumptionKwh: Number(form.previousConsumptionKwh),
             householdSize: Number(form.householdSize),
             acUsage: Number(form.acUsage),
             fanUsage: Number(form.fanUsage),
+            workFromHome: Number(form.workFromHome),
         };
 
         try {
-            /*
-             * REAL API EXAMPLE
-             *
-             * Replace the mock section below with this
-             * when your Spring Boot API is ready.
-             *
-             * const res = await fetch(
-             *     'http://localhost:8080/api/predictions',
-             *     {
-             *         method: 'POST',
-             *         headers: {
-             *             'Content-Type': 'application/json',
-             *         },
-             *         body: JSON.stringify(payload),
-             *     }
-             * );
-             *
-             * if (!res.ok) {
-             *     throw new Error(
-             *         'Prediction request failed'
-             *     );
-             * }
-             *
-             * const data = await res.json();
-             *
-             * setResult({
-             *     predictedKwh: data.predictedKwh,
-             *     confidence: data.confidence ?? '—',
-             *     model:
-             *         data.model ??
-             *         'Random Forest Regressor v1.2',
-             * });
-             */
-
-            // -------------------------------------------------
-            // MOCK FALLBACK
-            // Remove this section when API is available.
-            // -------------------------------------------------
-
-            await new Promise((resolve) =>
-                setTimeout(resolve, 1500)
-            );
-
-            const base =
-                payload.previousConsumptionKwh +
-                payload.householdSize * 1.2 +
-                payload.acUsage * 2.5 +
-                payload.fanUsage * 0.8 +
-                (payload.temperatureC > 30 ? 1.5 : 0);
+            const data = await predictConsumption(payload);
 
             setResult({
-                predictedKwh: Number(base.toFixed(2)),
-                confidence: '94.6%',
-                model: 'Random Forest Regressor v1.2',
+                predictedKwh: data.predictedConsumptionKwh,
+                estimatedCostLkr: data.estimatedCostLkr,
+                tariffRateLkrPerKwh: data.tariffRateLkrPerKwh,
+                selectedModel: data.selectedModel,
+                confidenceR2: data.confidenceR2,
+                costNote: data.costNote,
+                monthlyKwh: data.monthlyPredictedConsumptionKwhAmount,
             });
         } catch (err) {
-            setErrors((prev) => ({
-                ...prev,
-                submit:
-                    err?.message ||
-                    'Prediction failed. Please try again.',
-            }));
+            // Full details go to the console for debugging…
+            console.error('[Predictions] error:', err);
+
+            // …but the user only sees a short, friendly message.
+            setApiError('Something went wrong. Please try again.');
         } finally {
             setIsRunning(false);
         }
@@ -248,13 +178,12 @@ export const Predictions = () => {
         setForm(INITIAL_FORM);
         setErrors({});
         setResult(null);
+        setApiError('');
     };
 
     const inputClass = (field) =>
         `w-full h-10 px-3 rounded-lg border bg-surface-container-lowest text-primary font-body-sm text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition ${
-            errors[field]
-                ? 'border-red-400'
-                : 'border-outline-variant'
+            errors[field] ? 'border-red-400' : 'border-outline-variant'
         }`;
 
     return (
@@ -265,10 +194,9 @@ export const Predictions = () => {
                     <h1 className="font-headline-lg text-headline-lg font-semibold text-primary tracking-tight">
                         Household Consumption Prediction
                     </h1>
-
                     <p className="font-body-md text-body-md text-secondary mt-1">
-                        Enter household and environmental parameters
-                        to predict electricity consumption (kWh)
+                        Enter household and environmental parameters to predict
+                        electricity consumption (kWh)
                     </p>
                 </div>
 
@@ -286,14 +214,70 @@ export const Predictions = () => {
                 </div>
             </div>
 
+            {/* ✅ Black + red error banner */}
+            {apiError && (
+                <ErrorMessage
+                    message={apiError}
+                    onDismiss={() => setApiError('')}
+                />
+            )}
+
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Form */}
                 <form
                     onSubmit={handleRunForecast}
                     className="lg:col-span-2 border border-outline-variant rounded-xl p-6 bg-surface-container-lowest space-y-6"
                 >
-                    {/* Location */}
+                    {/* Date & Time */}
                     <div>
+                        <h3 className="font-headline-sm text-headline-sm font-semibold text-primary mb-4 flex items-center gap-2">
+                            <span className="material-symbols-outlined text-[20px] text-primary/70">
+                                schedule
+                            </span>
+                            Date &amp; Time
+                        </h3>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block font-label-sm text-label-sm font-medium text-secondary mb-1">
+                                    Date <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="date"
+                                    name="date"
+                                    value={form.date}
+                                    onChange={handleChange}
+                                    className={inputClass('date')}
+                                />
+                                {errors.date && (
+                                    <p className="font-body-sm text-body-sm text-red-600 mt-1">
+                                        {errors.date}
+                                    </p>
+                                )}
+                            </div>
+
+                            <div>
+                                <label className="block font-label-sm text-label-sm font-medium text-secondary mb-1">
+                                    Time <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="time"
+                                    name="time"
+                                    value={form.time}
+                                    onChange={handleChange}
+                                    className={inputClass('time')}
+                                />
+                                {errors.time && (
+                                    <p className="font-body-sm text-body-sm text-red-600 mt-1">
+                                        {errors.time}
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Location */}
+                    <div className="pt-4 border-t border-outline-variant/50">
                         <h3 className="font-headline-sm text-headline-sm font-semibold text-primary mb-4 flex items-center gap-2">
                             <span className="material-symbols-outlined text-[20px] text-primary/70">
                                 location_on
@@ -302,35 +286,23 @@ export const Predictions = () => {
                         </h3>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            {/* Province */}
                             <div>
                                 <label className="block font-label-sm text-label-sm font-medium text-secondary mb-1">
-                                    Province{' '}
-                                    <span className="text-red-500">
-                                        *
-                                    </span>
+                                    Province <span className="text-red-500">*</span>
                                 </label>
-
                                 <select
                                     name="province"
                                     value={form.province}
                                     onChange={handleChange}
                                     className={inputClass('province')}
                                 >
-                                    <option value="">
-                                        Select province
-                                    </option>
-
+                                    <option value="">Select province</option>
                                     {PROVINCES.map((province) => (
-                                        <option
-                                            key={province}
-                                            value={province}
-                                        >
+                                        <option key={province} value={province}>
                                             {province}
                                         </option>
                                     ))}
                                 </select>
-
                                 {errors.province && (
                                     <p className="font-body-sm text-body-sm text-red-600 mt-1">
                                         {errors.province}
@@ -338,46 +310,30 @@ export const Predictions = () => {
                                 )}
                             </div>
 
-                            {/* District */}
                             <div>
                                 <label className="block font-label-sm text-label-sm font-medium text-secondary mb-1">
-                                    District{' '}
-                                    <span className="text-red-500">
-                                        *
-                                    </span>
+                                    District <span className="text-red-500">*</span>
                                 </label>
-
                                 <select
                                     name="district"
                                     value={form.district}
                                     onChange={handleChange}
                                     disabled={!form.province}
-                                    className={`${inputClass(
-                                        'district'
-                                    )} ${
+                                    className={`${inputClass('district')} ${
                                         !form.province
                                             ? 'opacity-60 cursor-not-allowed'
                                             : ''
                                     }`}
                                 >
-                                    <option value="">
-                                        Select district
-                                    </option>
-
-                                    {(
-                                        DISTRICTS_BY_PROVINCE[
-                                            form.province
-                                        ] || []
-                                    ).map((district) => (
-                                        <option
-                                            key={district}
-                                            value={district}
-                                        >
-                                            {district}
-                                        </option>
-                                    ))}
+                                    <option value="">Select district</option>
+                                    {(DISTRICTS_BY_PROVINCE[form.province] || []).map(
+                                        (district) => (
+                                            <option key={district} value={district}>
+                                                {district}
+                                            </option>
+                                        )
+                                    )}
                                 </select>
-
                                 {errors.district && (
                                     <p className="font-body-sm text-body-sm text-red-600 mt-1">
                                         {errors.district}
@@ -397,15 +353,10 @@ export const Predictions = () => {
                         </h3>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            {/* Temperature */}
                             <div>
                                 <label className="block font-label-sm text-label-sm font-medium text-secondary mb-1">
-                                    Temperature (°C){' '}
-                                    <span className="text-red-500">
-                                        *
-                                    </span>
+                                    Temperature (°C) <span className="text-red-500">*</span>
                                 </label>
-
                                 <input
                                     type="number"
                                     step="0.1"
@@ -413,11 +364,8 @@ export const Predictions = () => {
                                     value={form.temperatureC}
                                     onChange={handleChange}
                                     placeholder="e.g. 30.5"
-                                    className={inputClass(
-                                        'temperatureC'
-                                    )}
+                                    className={inputClass('temperatureC')}
                                 />
-
                                 {errors.temperatureC && (
                                     <p className="font-body-sm text-body-sm text-red-600 mt-1">
                                         {errors.temperatureC}
@@ -425,15 +373,10 @@ export const Predictions = () => {
                                 )}
                             </div>
 
-                            {/* Humidity */}
                             <div>
                                 <label className="block font-label-sm text-label-sm font-medium text-secondary mb-1">
-                                    Humidity (%){' '}
-                                    <span className="text-red-500">
-                                        *
-                                    </span>
+                                    Humidity (%) <span className="text-red-500">*</span>
                                 </label>
-
                                 <input
                                     type="number"
                                     step="0.1"
@@ -443,11 +386,8 @@ export const Predictions = () => {
                                     value={form.humidityPct}
                                     onChange={handleChange}
                                     placeholder="0 – 100"
-                                    className={inputClass(
-                                        'humidityPct'
-                                    )}
+                                    className={inputClass('humidityPct')}
                                 />
-
                                 {errors.humidityPct && (
                                     <p className="font-body-sm text-body-sm text-red-600 mt-1">
                                         {errors.humidityPct}
@@ -467,48 +407,32 @@ export const Predictions = () => {
                         </h3>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            {/* Previous Consumption */}
                             <div>
                                 <label className="block font-label-sm text-label-sm font-medium text-secondary mb-1">
                                     Previous Consumption (kWh){' '}
-                                    <span className="text-red-500">
-                                        *
-                                    </span>
+                                    <span className="text-red-500">*</span>
                                 </label>
-
                                 <input
                                     type="number"
                                     step="0.1"
                                     min="0"
                                     name="previousConsumptionKwh"
-                                    value={
-                                        form.previousConsumptionKwh
-                                    }
+                                    value={form.previousConsumptionKwh}
                                     onChange={handleChange}
                                     placeholder="e.g. 12.4"
-                                    className={inputClass(
-                                        'previousConsumptionKwh'
-                                    )}
+                                    className={inputClass('previousConsumptionKwh')}
                                 />
-
                                 {errors.previousConsumptionKwh && (
                                     <p className="font-body-sm text-body-sm text-red-600 mt-1">
-                                        {
-                                            errors.previousConsumptionKwh
-                                        }
+                                        {errors.previousConsumptionKwh}
                                     </p>
                                 )}
                             </div>
 
-                            {/* Household Size */}
                             <div>
                                 <label className="block font-label-sm text-label-sm font-medium text-secondary mb-1">
-                                    Household Size{' '}
-                                    <span className="text-red-500">
-                                        *
-                                    </span>
+                                    Household Size <span className="text-red-500">*</span>
                                 </label>
-
                                 <input
                                     type="number"
                                     min="1"
@@ -517,11 +441,8 @@ export const Predictions = () => {
                                     value={form.householdSize}
                                     onChange={handleChange}
                                     placeholder="e.g. 4"
-                                    className={inputClass(
-                                        'householdSize'
-                                    )}
+                                    className={inputClass('householdSize')}
                                 />
-
                                 {errors.householdSize && (
                                     <p className="font-body-sm text-body-sm text-red-600 mt-1">
                                         {errors.householdSize}
@@ -541,74 +462,55 @@ export const Predictions = () => {
                         </h3>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            {/* AC */}
-                            <div className="flex items-center justify-between p-3 rounded-lg border border-outline-variant bg-surface-container-lowest">
-                                <div>
-                                    <div className="font-label-md text-label-md font-medium text-primary">
-                                        AC Usage
-                                    </div>
-
-                                    <div className="font-body-sm text-body-sm text-secondary">
-                                        Air conditioner active
-                                    </div>
-                                </div>
-
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        handleToggle('acUsage')
-                                    }
-                                    className={`w-11 h-6 flex-shrink-0 flex items-center rounded-full p-1 transition-colors duration-200 ${
-                                        form.acUsage
-                                            ? 'bg-primary justify-end'
-                                            : 'bg-outline-variant justify-start'
-                                    }`}
-                                    aria-pressed={!!form.acUsage}
-                                    aria-label="Toggle AC usage"
+                            {[
+                                {
+                                    key: 'acUsage',
+                                    label: 'AC Usage',
+                                    hint: 'Air conditioner active',
+                                },
+                                {
+                                    key: 'fanUsage',
+                                    label: 'Fan Usage',
+                                    hint: 'Ceiling / pedestal fan',
+                                },
+                                {
+                                    key: 'workFromHome',
+                                    label: 'Work From Home',
+                                    hint: 'Occupants working remotely',
+                                },
+                            ].map(({ key, label, hint }) => (
+                                <div
+                                    key={key}
+                                    className="flex items-center justify-between p-3 rounded-lg border border-outline-variant bg-surface-container-lowest"
                                 >
-                                    <span className="w-4 h-4 rounded-full bg-white shadow-md" />
-                                </button>
-                            </div>
-
-                            {/* Fan */}
-                            <div className="flex items-center justify-between p-3 rounded-lg border border-outline-variant bg-surface-container-lowest">
-                                <div>
-                                    <div className="font-label-md text-label-md font-medium text-primary">
-                                        Fan Usage
+                                    <div>
+                                        <div className="font-label-md text-label-md font-medium text-primary">
+                                            {label}
+                                        </div>
+                                        <div className="font-body-sm text-body-sm text-secondary">
+                                            {hint}
+                                        </div>
                                     </div>
-
-                                    <div className="font-body-sm text-body-sm text-secondary">
-                                        Ceiling / pedestal fan
-                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => handleToggle(key)}
+                                        className={`w-11 h-6 flex-shrink-0 flex items-center rounded-full p-1 transition-colors duration-200 ${
+                                            form[key]
+                                                ? 'bg-primary justify-end'
+                                                : 'bg-outline-variant justify-start'
+                                        }`}
+                                        aria-pressed={!!form[key]}
+                                        aria-label={`Toggle ${label}`}
+                                    >
+                                        <span className="w-4 h-4 rounded-full bg-white shadow-md" />
+                                    </button>
                                 </div>
-
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        handleToggle('fanUsage')
-                                    }
-                                    className={`w-11 h-6 flex-shrink-0 flex items-center rounded-full p-1 transition-colors duration-200 ${
-                                        form.fanUsage
-                                            ? 'bg-primary justify-end'
-                                            : 'bg-outline-variant justify-start'
-                                    }`}
-                                    aria-pressed={!!form.fanUsage}
-                                    aria-label="Toggle fan usage"
-                                >
-                                    <span className="w-4 h-4 rounded-full bg-white shadow-md" />
-                                </button>
-                            </div>
+                            ))}
                         </div>
                     </div>
 
                     {/* Submit */}
                     <div className="pt-4 border-t border-outline-variant/50 flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3">
-                        {errors.submit && (
-                            <p className="font-body-sm text-body-sm text-red-600 sm:mr-auto">
-                                {errors.submit}
-                            </p>
-                        )}
-
                         <button
                             type="submit"
                             disabled={isRunning}
@@ -620,19 +522,12 @@ export const Predictions = () => {
                         >
                             <span
                                 className={`material-symbols-outlined text-[18px] ${
-                                    isRunning
-                                        ? 'animate-spin'
-                                        : ''
+                                    isRunning ? 'animate-spin' : ''
                                 }`}
                             >
-                                {isRunning
-                                    ? 'progress_activity'
-                                    : 'bolt'}
+                                {isRunning ? 'progress_activity' : 'bolt'}
                             </span>
-
-                            {isRunning
-                                ? 'Predicting...'
-                                : 'Predict Consumption'}
+                            {isRunning ? 'Predicting...' : 'Predict Consumption'}
                         </button>
                     </div>
                 </form>
@@ -653,13 +548,10 @@ export const Predictions = () => {
                                 <span className="material-symbols-outlined text-[48px] text-secondary/40">
                                     insights
                                 </span>
-
                                 <p className="font-body-sm text-body-sm text-secondary mt-3">
                                     Fill in the form and click{' '}
-                                    <strong>
-                                        Predict Consumption
-                                    </strong>{' '}
-                                    to see the estimated kWh.
+                                    <strong>Predict Consumption</strong> to see the
+                                    estimated kWh.
                                 </p>
                             </div>
                         )}
@@ -670,7 +562,6 @@ export const Predictions = () => {
                                 <span className="material-symbols-outlined text-[40px] text-primary animate-spin">
                                     progress_activity
                                 </span>
-
                                 <p className="font-body-sm text-body-sm text-secondary mt-3">
                                     Running regression model...
                                 </p>
@@ -684,57 +575,74 @@ export const Predictions = () => {
                                     <div className="font-label-sm text-label-sm text-secondary uppercase tracking-wider">
                                         Predicted Consumption
                                     </div>
-
                                     <div className="font-display-kpi text-display-kpi text-primary tracking-tight mt-1">
-                                        {result.predictedKwh}
+                                        {Number(result.predictedKwh).toFixed(4)}
                                     </div>
-
                                     <div className="font-headline-sm text-headline-sm text-secondary font-normal">
                                         kWh
                                     </div>
                                 </div>
 
+                                <div className="text-center py-3 rounded-lg bg-emerald-50/60">
+                                    <div className="font-label-sm text-label-sm text-emerald-700 uppercase tracking-wider">
+                                        Estimated Cost
+                                    </div>
+                                    <div className="font-headline-md text-headline-md font-bold text-emerald-700 mt-1">
+                                        LKR {Number(result.estimatedCostLkr).toFixed(2)}
+                                    </div>
+                                </div>
+
                                 <div className="pt-3 border-t border-outline-variant/40 space-y-2">
                                     <div className="flex items-center justify-between font-body-sm text-body-sm">
-                                        <span className="text-secondary">
-                                            Model
-                                        </span>
-
+                                        <span className="text-secondary">Model</span>
                                         <span className="font-semibold text-primary">
-                                            {result.model}
+                                            {result.selectedModel || '—'}
                                         </span>
                                     </div>
 
                                     <div className="flex items-center justify-between font-body-sm text-body-sm">
-                                        <span className="text-secondary">
-                                            Confidence
-                                        </span>
-
+                                        <span className="text-secondary">Confidence (R²)</span>
                                         <span className="font-semibold text-emerald-600">
-                                            {result.confidence}
+                                            {Number(result.confidenceR2).toFixed(4)}
+                                        </span>
+                                    </div>
+
+                                    <div className="flex items-center justify-between font-body-sm text-body-sm">
+                                        <span className="text-secondary">Tariff Rate</span>
+                                        <span className="font-semibold text-primary">
+                                            LKR {result.tariffRateLkrPerKwh} / kWh
                                         </span>
                                     </div>
 
                                     <div className="flex items-center justify-between font-body-sm text-body-sm">
                                         <span className="text-secondary">
-                                            Province
+                                            Monthly Estimate
                                         </span>
+                                        <span className="font-semibold text-primary">
+                                            {Number(result.monthlyKwh).toFixed(2)} kWh
+                                        </span>
+                                    </div>
 
+                                    <div className="flex items-center justify-between font-body-sm text-body-sm">
+                                        <span className="text-secondary">Province</span>
                                         <span className="font-semibold text-primary">
                                             {form.province || '—'}
                                         </span>
                                     </div>
 
                                     <div className="flex items-center justify-between font-body-sm text-body-sm">
-                                        <span className="text-secondary">
-                                            District
-                                        </span>
-
+                                        <span className="text-secondary">District</span>
                                         <span className="font-semibold text-primary">
                                             {form.district || '—'}
                                         </span>
                                     </div>
                                 </div>
+
+                                {result.costNote && (
+                                    <p className="pt-3 border-t border-outline-variant/40 font-body-sm text-body-sm text-secondary leading-relaxed">
+                                        {result.costNote}
+                                    </p>
+                                )}
                             </div>
                         )}
                     </div>
@@ -744,14 +652,9 @@ export const Predictions = () => {
                         <span className="material-symbols-outlined text-primary/70 text-[20px]">
                             info
                         </span>
-
                         <p className="font-body-sm text-body-sm text-secondary leading-relaxed">
-                            Predictions use a trained{' '}
-                            <strong>
-                                Random Forest Regressor
-                            </strong>{' '}
-                            served via the Spring Boot REST API.
-                            Inputs are validated against the DTO
+                            Predictions use a trained regression model served via the
+                            Spring Boot REST API. Inputs are validated against the DTO
                             constraints before submission.
                         </p>
                     </div>

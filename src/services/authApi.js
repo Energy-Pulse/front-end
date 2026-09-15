@@ -27,6 +27,13 @@ async function apiRequest(endpoint, options = {}) {
   return payload;
 }
 
+export const loginUser = async ({ email, password }) => {
+  return apiRequest('/api/users/v1/login', {
+    method: 'POST',
+    body: JSON.stringify({ email, password }),
+  });
+};
+
 export const registerUser = async (formData) => {
   const fullName = (formData.fullName || '').trim();
   const nameParts = fullName.split(/\s+/).filter(Boolean);
@@ -43,15 +50,27 @@ export const registerUser = async (formData) => {
     isAgreedToTerms: String(Boolean(formData.termsAccepted)),
   };
 
-  return apiRequest('/api/users/v1/signup', {
+  const response = await apiRequest('/api/users/v1/signup', {
     method: 'POST',
     body: JSON.stringify(payload),
   });
-};
 
-export const loginUser = async ({ email, password }) => {
-  return apiRequest('/api/users/v1/login', {
-    method: 'POST',
-    body: JSON.stringify({ email, password }),
+  // Verify signup was actually successful
+  if (!response || response.status !== '201 CREATED') {
+    throw new Error(response?.message || 'Signup failed. Please try again.');
+  }
+
+  // Auto-login after successful signup so user lands on dashboard
+  const loginResponse = await loginUser({
+    email: formData.email,
+    password: formData.password,
   });
+
+  return {
+    user: response.data,
+    token: loginResponse.token,
+    tokenType: loginResponse.tokenType,
+    userId: loginResponse.userId,
+    message: loginResponse.message,
+  };
 };

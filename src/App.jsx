@@ -14,11 +14,31 @@ const AppContent = () => {
     const [showRegisterModal, setShowRegisterModal] = useState(false);
     const [showDashboard, setShowDashboard] = useState(false);
     const [currentPage, setCurrentPage] = useState('dashboard');
-    const [user] = useState({ name: 'Alex Morgan', email: 'alex@example.com' });
+    const [user, setUser] = useState({ name: 'Alex Morgan', email: 'alex@example.com' });
     const { scrollToSection } = useSection();
 
     const handleNavigate = (page) => setCurrentPage(page);
     const handleBackToHome = () => setShowDashboard(false);
+
+    const handleAuthSuccess = (response) => {
+        console.log('Auth success:', response);
+
+        // Update user state from response if available
+        if (response?.user) {
+            setUser({
+                name: response.user.name || 'User',
+                email: response.user.email || '',
+            });
+        }
+
+        // Close any open modals
+        setShowLoginModal(false);
+        setShowRegisterModal(false);
+
+        // Navigate to dashboard
+        setCurrentPage('dashboard');
+        setShowDashboard(true);
+    };
 
     return (
         <Background variant="unsplash">
@@ -56,7 +76,7 @@ const AppContent = () => {
                     setShowLoginModal(false);
                     setShowRegisterModal(true);
                 }}
-                onLogin={() => setShowLoginModal(false)}
+                onLogin={handleAuthSuccess}
             />
 
             <RegisterModal
@@ -66,7 +86,7 @@ const AppContent = () => {
                     setShowRegisterModal(false);
                     setShowLoginModal(true);
                 }}
-                onRegister={() => setShowRegisterModal(false)}
+                onRegister={handleAuthSuccess}
             />
         </Background>
     );
