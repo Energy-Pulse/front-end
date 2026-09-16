@@ -14,28 +14,53 @@ const AppContent = () => {
     const [showRegisterModal, setShowRegisterModal] = useState(false);
     const [showDashboard, setShowDashboard] = useState(false);
     const [currentPage, setCurrentPage] = useState('dashboard');
-    const [user, setUser] = useState({ name: 'Alex Morgan', email: 'alex@example.com' });
+    const [user, setUser] = useState(null);
     const { scrollToSection } = useSection();
 
+    const isAuthenticated = () =>
+        Boolean(localStorage.getItem('smartEnergyToken'));
+
     const handleNavigate = (page) => setCurrentPage(page);
+
+    // Just navigates back to landing — does NOT clear auth
     const handleBackToHome = () => setShowDashboard(false);
+
+    // Real logout — clears localStorage, resets state, goes home
+    const handleLogout = () => {
+        localStorage.removeItem('smartEnergyToken');
+        localStorage.removeItem('smartEnergyUserId');
+        setUser(null);
+        setCurrentPage('dashboard');
+        setShowDashboard(false);
+    };
+
+    // Wrapper used by "Go to Dashboard" buttons — requires auth
+    const handleGoToDashboard = () => {
+        if (!isAuthenticated()) {
+            setShowLoginModal(true);
+            return;
+        }
+        setCurrentPage('dashboard');
+        setShowDashboard(true);
+    };
 
     const handleAuthSuccess = (response) => {
         console.log('Auth success:', response);
 
-        // Update user state from response if available
         if (response?.user) {
             setUser({
-                name: response.user.name || 'User',
+                name: response.user.name || response.user.firstName || 'User',
                 email: response.user.email || '',
+            });
+        } else if (response?.email) {
+            setUser({
+                name: response.name || response.firstName || 'User',
+                email: response.email,
             });
         }
 
-        // Close any open modals
         setShowLoginModal(false);
         setShowRegisterModal(false);
-
-        // Navigate to dashboard
         setCurrentPage('dashboard');
         setShowDashboard(true);
     };
@@ -48,18 +73,19 @@ const AppContent = () => {
                     onNavigate={handleNavigate}
                     currentPage={currentPage}
                     onBackToHome={handleBackToHome}
+                    onLogout={handleLogout}
                 />
             ) : (
                 <>
                     <Header
                         onSignIn={() => setShowLoginModal(true)}
                         onGetStarted={() => setShowRegisterModal(true)}
-                        onNavigateToDashboard={() => setShowDashboard(true)}
+                        onNavigateToDashboard={handleGoToDashboard}
                         onScrollToSection={scrollToSection}
                     />
                     <LandingPage
                         onShowRegisterModal={() => setShowRegisterModal(true)}
-                        onShowDashboard={() => setShowDashboard(true)}
+                        onShowDashboard={handleGoToDashboard}
                     />
                     <footer className="relative z-10 mt-auto border-t border-outline-variant/30 glass-image py-12">
                         <div className="footer-content max-w-7xl mx-auto px-6 text-center font-body-sm text-body-sm text-secondary">

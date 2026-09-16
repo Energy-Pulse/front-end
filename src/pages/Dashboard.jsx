@@ -1,39 +1,70 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ModernChart } from '../components/ModernChart';
-import { Analytics } from './Analytics';
-import { Household } from './HouseholdManagement';
 import { Predictions } from './Prediction';
 import { PredictionHistory } from './PredictionHistory';
 import { Profile } from './Profile';
+import { fetchPredictionHistory } from '../services/historyApi';
+import { useCurrentUser } from '../hooks/useCurrentUser';
 
 const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
-    { id: 'analytics', label: 'Analytics', icon: 'analytics' },
     { id: 'predictions', label: 'Predictions', icon: 'online_prediction' },
     { id: 'prediction-history', label: 'History', icon: 'history' },
-    { id: 'household', label: 'Household', icon: 'home' },
     { id: 'profile', label: 'Profile', icon: 'person' },
 ];
 
-export const Dashboard = ({ user, onNavigate, currentPage = 'dashboard', onBackToHome }) => {
+// ── Live clock ───────────────────────────────────────────────
+const useLiveClock = () => {
+    const [now, setNow] = useState(new Date());
+    useEffect(() => {
+        const t = setInterval(() => setNow(new Date()), 1000);
+        return () => clearInterval(t);
+    }, []);
+    return now;
+};
+
+export const Dashboard = ({
+                              user: fallbackUser,
+                              onNavigate,
+                              currentPage = 'dashboard',
+                              onBackToHome,
+                              onLogout,
+                          }) => {
     const [timeRange, setTimeRange] = useState('daily');
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [livePrediction, setLivePrediction] = useState(null);
+    const [history, setHistory] = useState([]);
 
-    const metrics = {
-        today: 12.8,
-        predicted: 14.63,
-        average: 13.2,
-        monthly: 396.4,
-    };
+    const now = useLiveClock();
+
+    //  Real user details from /api/ml/me/{userId}
+    const { user: currentUser } = useCurrentUser(fallbackUser);
+
+    // Load latest prediction from history for the dashboard view
+    useEffect(() => {
+        const userId = localStorage.getItem('smartEnergyUserId');
+        if (!userId) return;
+        fetchPredictionHistory(userId)
+            .then((data) => {
+                if (Array.isArray(data) && data.length > 0) {
+                    const sorted = [...data].sort(
+                        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+                    );
+                    setLivePrediction(sorted[0]);
+                    setHistory(sorted);
+                }
+            })
+            .catch(() => {
+                /* silent fallback to mock metrics */
+            });
+    }, []);
 
     const getHeaderInfo = () => {
         const pageMap = {
-            'analytics': { title: 'Analytics', subtitle: 'Data Insights' },
-            'household': { title: 'Household', subtitle: 'Device & Member Management' },
-            'predictions': { title: 'Predictions', subtitle: 'ML Load Forecasting' },
+            predictions: { title: 'Predictions', subtitle: 'ML Load Forecasting' },
             'prediction-history': { title: 'History', subtitle: 'Forecast Performance' },
-            'profile': { title: 'Profile', subtitle: 'Account Settings' },
-            'dashboard': { title: 'Dashboard', subtitle: 'Operational Overview' },
+            profile: { title: 'Profile', subtitle: 'Account Settings' },
+            dashboard: { title: 'Dashboard', subtitle: 'Operational Overview' },
         };
         return pageMap[currentPage] || pageMap.dashboard;
     };
@@ -42,33 +73,40 @@ export const Dashboard = ({ user, onNavigate, currentPage = 'dashboard', onBackT
 
     const handleNavClick = (id) => {
         onNavigate?.(id);
-        setSidebarOpen(false); // auto-close drawer on mobile after navigating
+        setSidebarOpen(false);
     };
 
     const handleExit = () => {
+
         setSidebarOpen(false);
-        onBackToHome?.();
+        // Clear auth + user data, then go home
+        if (onLogout) {
+            localStorage.clear();
+            localStorage.removeItem('token');
+            onLogout();
+        } else {
+            onBackToHome?.();
+        }
     };
 
     const renderPage = () => {
         switch (currentPage) {
-            case 'analytics':
-                return <Analytics />;
-            case 'household':
-                return <Household />;
             case 'predictions':
                 return <Predictions />;
             case 'prediction-history':
                 return <PredictionHistory />;
             case 'profile':
-                return <Profile user={user} />;
+                return <Profile user={currentUser} />;
             default:
                 return (
                     <DashboardContent
-                        metrics={metrics}
                         timeRange={timeRange}
                         setTimeRange={setTimeRange}
-                        user={user}
+                        user={currentUser}
+                        now={now}
+                        livePrediction={livePrediction}
+                        history={history}
+                        onNavigate={onNavigate}
                     />
                 );
         }
@@ -76,7 +114,6 @@ export const Dashboard = ({ user, onNavigate, currentPage = 'dashboard', onBackT
 
     return (
         <div className="flex min-h-screen bg-surface-container-lowest">
-            {/* Mobile Backdrop (only when drawer is open) */}
             {sidebarOpen && (
                 <div
                     className="fixed inset-0 bg-black/40 z-40 md:hidden"
@@ -92,18 +129,20 @@ export const Dashboard = ({ user, onNavigate, currentPage = 'dashboard', onBackT
                 }`}
             >
                 <div className="flex flex-col gap-6">
-                    {/* Brand */}
                     <div className="sidebar-brand-row px-3 pt-2 flex items-center justify-between gap-3">
                         <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-lg bg-primary text-on-primary flex items-center justify-center flex-shrink-0">
                                 <span className="material-symbols-outlined text-[20px]">bolt</span>
                             </div>
                             <div className="sidebar-label-text">
-                                <h1 className="font-headline-sm text-headline-sm font-semibold text-primary tracking-tight">SmartEnergy AI</h1>
-                                <p className="font-label-sm text-label-sm text-secondary font-medium">Precision Telemetry</p>
+                                <h1 className="font-headline-sm text-headline-sm font-semibold text-primary tracking-tight">
+                                    SmartEnergy AI
+                                </h1>
+                                <p className="font-label-sm text-label-sm text-secondary font-medium">
+                                    Precision Telemetry
+                                </p>
                             </div>
                         </div>
-                        {/* Close button (mobile only) */}
                         <button
                             className="md:hidden text-secondary hover:text-primary p-1 flex-shrink-0"
                             onClick={() => setSidebarOpen(false)}
@@ -113,7 +152,6 @@ export const Dashboard = ({ user, onNavigate, currentPage = 'dashboard', onBackT
                         </button>
                     </div>
 
-                    {/* Navigation */}
                     <nav className="flex flex-col space-y-1">
                         {navItems.map((item) => (
                             <button
@@ -125,46 +163,47 @@ export const Dashboard = ({ user, onNavigate, currentPage = 'dashboard', onBackT
                                 }`}
                                 onClick={() => handleNavClick(item.id)}
                             >
-                                <span className="material-symbols-outlined text-[20px] flex-shrink-0">{item.icon}</span>
+                                <span className="material-symbols-outlined text-[20px] flex-shrink-0">
+                                    {item.icon}
+                                </span>
                                 <span className="sidebar-label-text">{item.label}</span>
                             </button>
                         ))}
                     </nav>
                 </div>
 
-                {/* Sidebar Footer — user row with integrated Exit button */}
+                {/* Sidebar Footer — real user from /api/ml/me/{userId} */}
                 <div className="pt-4 border-t border-outline-variant">
                     <div className="sidebar-footer-user flex items-center justify-between gap-2 px-2 py-2">
                         <div className="flex items-center gap-3 min-w-0 flex-1">
                             <div className="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-primary font-semibold flex-shrink-0">
-                                {user?.name?.charAt(0) || 'U'}
+                                {currentUser?.name?.charAt(0) || 'U'}
                             </div>
                             <div className="sidebar-label-text min-w-0">
                                 <div className="font-label-md text-label-md font-semibold text-primary truncate">
-                                    {user?.name || 'User'}
+                                    {currentUser?.name || 'User'}
                                 </div>
-                                <div className="font-body-sm text-body-sm text-secondary truncate">Household Admin</div>
+                                <div className="font-body-sm text-body-sm text-secondary truncate">
+                                    {currentUser?.email || 'Household Admin'}
+                                </div>
                             </div>
                         </div>
                         <button
                             onClick={handleExit}
                             className="sidebar-exit-btn flex items-center justify-center gap-1.5 p-2 rounded-lg text-secondary hover:text-primary hover:bg-surface-container-low transition-colors flex-shrink-0"
-                            title="Back to Home"
-                            aria-label="Back to Home"
+                            title="Log out"
+                            aria-label="Log out"
                         >
                             <span className="material-symbols-outlined text-[20px]">logout</span>
-                            <span className="sidebar-exit-label hidden">Exit</span>
                         </button>
                     </div>
                 </div>
             </aside>
 
-            {/* Main Section */}
+            {/* Main */}
             <main className="dashboard-main ml-64 flex-1 min-h-screen">
-                {/* Header */}
                 <header className="dashboard-top-header sticky top-0 z-30 h-16 px-6 flex justify-between items-center bg-surface-container-lowest border-b border-outline-variant">
                     <div className="flex items-center gap-4">
-                        {/* Hamburger — visible only ≤768px */}
                         <button
                             className="dashboard-mobile-toggle hidden items-center justify-center p-2 rounded-lg text-secondary hover:text-primary hover:bg-surface-container-low transition-colors"
                             onClick={() => setSidebarOpen(true)}
@@ -180,28 +219,59 @@ export const Dashboard = ({ user, onNavigate, currentPage = 'dashboard', onBackT
                             {headerInfo.subtitle}
                         </span>
                     </div>
+
                     <div className="dashboard-header-meta flex items-center gap-4">
-                        <div className="dashboard-date-pill flex items-center gap-2 px-3 py-1.5 rounded-lg border border-outline-variant bg-surface-container-lowest text-primary text-label-md font-medium hover:bg-surface-container-low transition-colors cursor-pointer">
-                            <span className="material-symbols-outlined text-[18px] text-secondary">calendar_today</span>
-                            <span>Sep 01 - Sep 07, 2026</span>
+                        <div className="hidden md:flex items-center gap-3 px-3 py-1.5 rounded-lg border border-outline-variant bg-surface-container-lowest">
+                            <span className="material-symbols-outlined text-[18px] text-secondary">
+                                schedule
+                            </span>
+                            <div className="flex flex-col leading-tight">
+                                <span className="font-label-sm text-label-sm font-semibold text-primary">
+                                    {now.toLocaleDateString('en-GB', {
+                                        weekday: 'short',
+                                        day: '2-digit',
+                                        month: 'short',
+                                        year: 'numeric',
+                                    })}
+                                </span>
+                                <span className="font-body-sm text-body-sm text-secondary">
+                                    {now.toLocaleTimeString('en-GB', {
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                        second: '2-digit',
+                                    })}
+                                </span>
+                            </div>
                         </div>
+
                         <button className="p-2 rounded-lg text-secondary hover:text-primary hover:bg-surface-container-low transition-colors">
-                            <span className="material-symbols-outlined text-[20px]">notifications</span>
+                            <span className="material-symbols-outlined text-[20px]">
+                                notifications
+                            </span>
                         </button>
                     </div>
                 </header>
 
-                {/* Main View Router */}
-                <div className="max-w-7xl mx-auto p-6 space-y-6">
-                    {renderPage()}
-                </div>
+                <div className="max-w-7xl mx-auto p-6 space-y-6">{renderPage()}</div>
             </main>
         </div>
     );
 };
 
-// Subcomponent: Dashboard Main Overview View
-const DashboardContent = ({ metrics, timeRange, setTimeRange, user }) => {
+/* ────────────────────────────────────────────────────────────
+   Dashboard Main Overview View
+   All KPIs are derived from real prediction history (or safe
+   fallbacks when history is empty).
+   ──────────────────────────────────────────────────────────── */
+const DashboardContent = ({
+                              timeRange,
+                              setTimeRange,
+                              user,
+                              now,
+                              livePrediction,
+                              history,
+                              onNavigate,
+                          }) => {
     const chartDataMap = {
         daily: [
             { date: '00:00', actual: 8.4 },
@@ -231,152 +301,434 @@ const DashboardContent = ({ metrics, timeRange, setTimeRange, user }) => {
 
     const currentChartData = chartDataMap[timeRange] || chartDataMap.daily;
 
+    // ── KPI values — all derived from real prediction history ──
+    const totalPredictions = history.length;
+
+    const avgPredicted =
+        history.length > 0
+            ? (
+                history.reduce(
+                    (s, h) => s + Number(h.predictedConsumptionKwh || 0),
+                    0
+                ) / history.length
+            ).toFixed(2)
+            : '—';
+
+    const avgConfidence =
+        history.length > 0
+            ? (
+            (history.reduce(
+                    (s, h) => s + Number(h.confidenceR2 || 0),
+                    0
+                ) /
+                history.length) *
+            100
+        ).toFixed(1) + '%'
+            : '—';
+
+    const latestPredicted = livePrediction
+        ? Number(livePrediction.predictedConsumptionKwh).toFixed(4)
+        : '—';
+
+    const monthlyEstimate = livePrediction?.monthlyPredictedConsumptionKwh
+        ? Number(livePrediction.monthlyPredictedConsumptionKwh).toFixed(1)
+        : '—';
+
+    const monthlyTarget = 420;
+    const monthlyProgress =
+        monthlyEstimate !== '—'
+            ? Math.min((Number(monthlyEstimate) / monthlyTarget) * 100, 100)
+            : 0;
+
+    const predictedModel = livePrediction?.selectedModel || 'No prediction yet';
+
+    const getGreeting = () => {
+        const h = now.getHours();
+        if (h < 12) return 'Good morning';
+        if (h < 18) return 'Good afternoon';
+        return 'Good evening';
+    };
+
     return (
         <>
+            {/* Page header with greeting + live time */}
             <div className="page-header-row flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
                     <h1 className="font-headline-lg text-headline-lg font-semibold text-primary tracking-tight">
-                        Good evening, {user?.name || 'User'}
+                        {getGreeting()}, {user?.name || 'User'}
                     </h1>
                     <p className="font-body-md text-body-md text-secondary mt-1">
                         Your household energy overview and ML-powered forecast
                     </p>
                 </div>
                 <div className="page-header-actions flex items-center gap-3">
-                    <button className="h-9 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-primary font-label-md text-label-md font-medium hover:bg-surface-container-low transition-colors inline-flex items-center gap-2 btn-premium">
+                    <button
+                        onClick={() => onNavigate?.('predictions')}
+                        className="h-9 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-primary font-label-md text-label-md font-medium hover:bg-surface-container-low transition-colors inline-flex items-center gap-2 btn-premium"
+                    >
                         <span className="material-symbols-outlined text-[18px]">download</span>
                         Export
                     </button>
-                    <button className="h-9 px-4 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-medium hover:bg-on-surface-variant transition-colors inline-flex items-center gap-2 shadow-sm btn-premium">
+                    <button
+                        onClick={() => onNavigate?.('predictions')}
+                        className="h-9 px-4 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-medium hover:bg-on-surface-variant transition-colors inline-flex items-center gap-2 shadow-sm btn-premium"
+                    >
                         <span className="material-symbols-outlined text-[18px]">bolt</span>
                         Predict
                     </button>
                 </div>
             </div>
 
+            {/* KPI cards — all real data */}
             <div className="kpi-grid-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="kpi-card p-5 rounded-xl border border-outline-variant bg-surface-container-lowest card-hover">
                     <div className="flex items-center justify-between">
-                        <span className="kpi-card-title font-label-sm text-label-sm text-secondary uppercase tracking-wider">Today's Usage</span>
-                        <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                            <span className="material-symbols-outlined text-[12px]">trending_up</span>
-                            +2.4%
+                        <span className="kpi-card-title font-label-sm text-label-sm text-secondary uppercase tracking-wider">
+                            Total Predictions
+                        </span>
+                        <span className="material-symbols-outlined text-primary/60 text-[22px]">
+                            functions
                         </span>
                     </div>
                     <div className="mt-2 flex items-baseline gap-2">
-                        <span className="kpi-card-value font-display-kpi text-display-kpi text-primary tracking-tight">{metrics.today}</span>
-                        <span className="font-headline-sm text-headline-sm text-secondary font-normal">kWh</span>
+                        <span className="kpi-card-value font-display-kpi text-display-kpi text-primary tracking-tight">
+                            {totalPredictions}
+                        </span>
+                        <span className="font-headline-sm text-headline-sm text-secondary font-normal">
+                            entries
+                        </span>
                     </div>
                     <p className="font-body-sm text-body-sm text-secondary mt-1 flex items-center gap-1">
-                        <span className="material-symbols-outlined text-[14px] text-secondary">schedule</span>
-                        Peak at 18:30
+                        <span className="material-symbols-outlined text-[14px] text-secondary">
+                            history
+                        </span>
+                        From your prediction history
                     </p>
                 </div>
 
                 <div className="kpi-card p-5 rounded-xl border border-outline-variant bg-surface-container-lowest card-hover">
                     <div className="flex items-center justify-between">
-                        <span className="kpi-card-title font-label-sm text-label-sm text-secondary uppercase tracking-wider">Predicted</span>
+                        <span className="kpi-card-title font-label-sm text-label-sm text-secondary uppercase tracking-wider">
+                            Latest Predicted
+                        </span>
                         <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
-                            <span className="material-symbols-outlined text-[12px]">warning</span>
-                            High Usage
+                            <span className="material-symbols-outlined text-[12px]">bolt</span>
+                            ML
                         </span>
                     </div>
                     <div className="mt-2 flex items-baseline gap-2">
-                        <span className="kpi-card-value font-display-kpi text-display-kpi text-primary tracking-tight">{metrics.predicted}</span>
-                        <span className="font-headline-sm text-headline-sm text-secondary font-normal">kWh</span>
+                        <span className="kpi-card-value font-display-kpi text-display-kpi text-primary tracking-tight">
+                            {latestPredicted}
+                        </span>
+                        <span className="font-headline-sm text-headline-sm text-secondary font-normal">
+                            kWh
+                        </span>
                     </div>
                     <p className="font-body-sm text-body-sm text-secondary mt-1 flex items-center gap-1">
-                        <span className="material-symbols-outlined text-[14px] text-secondary">model_training</span>
-                        Random Forest v1.2
+                        <span className="material-symbols-outlined text-[14px] text-secondary">
+                            model_training
+                        </span>
+                        {predictedModel}
                     </p>
                 </div>
 
                 <div className="kpi-card p-5 rounded-xl border border-outline-variant bg-surface-container-lowest card-hover">
                     <div className="flex items-center justify-between">
-                        <span className="kpi-card-title font-label-sm text-label-sm text-secondary uppercase tracking-wider">Average</span>
-                        <span className="inline-flex items-center gap-1 text-xs font-medium text-secondary bg-surface-container-low px-2 py-0.5 rounded-full border border-outline-variant">
-                            <span className="material-symbols-outlined text-[12px]">trending_down</span>
-                            -1.8%
+                        <span className="kpi-card-title font-label-sm text-label-sm text-secondary uppercase tracking-wider">
+                            Avg Predicted
+                        </span>
+                        <span className="material-symbols-outlined text-primary/60 text-[22px]">
+                            show_chart
                         </span>
                     </div>
                     <div className="mt-2 flex items-baseline gap-2">
-                        <span className="kpi-card-value font-display-kpi text-display-kpi text-primary tracking-tight">{metrics.average}</span>
-                        <span className="font-headline-sm text-headline-sm text-secondary font-normal">kWh</span>
+                        <span className="kpi-card-value font-display-kpi text-display-kpi text-primary tracking-tight">
+                            {avgPredicted}
+                        </span>
+                        <span className="font-headline-sm text-headline-sm text-secondary font-normal">
+                            kWh
+                        </span>
                     </div>
                     <p className="font-body-sm text-body-sm text-secondary mt-1 flex items-center gap-1">
-                        <span className="material-symbols-outlined text-[14px] text-secondary">hourglass_top</span>
-                        Per hour
+                        <span className="material-symbols-outlined text-[14px] text-secondary">
+                            analytics
+                        </span>
+                        Mean over {totalPredictions} predictions
                     </p>
                 </div>
 
                 <div className="kpi-card p-5 rounded-xl border border-outline-variant bg-surface-container-lowest card-hover">
                     <div className="flex items-center justify-between">
-                        <span className="kpi-card-title font-label-sm text-label-sm text-secondary uppercase tracking-wider">Monthly</span>
-                        <span className="text-xs font-medium text-secondary">Target: 420</span>
+                        <span className="kpi-card-title font-label-sm text-label-sm text-secondary uppercase tracking-wider">
+                            Avg Confidence
+                        </span>
+                        <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                            <span className="material-symbols-outlined text-[12px]">verified</span>
+                            R²
+                        </span>
                     </div>
                     <div className="mt-2 flex items-baseline gap-2">
-                        <span className="kpi-card-value font-display-kpi text-display-kpi text-primary tracking-tight">{metrics.monthly}</span>
-                        <span className="font-headline-sm text-headline-sm text-secondary font-normal">kWh</span>
+                        <span className="kpi-card-value font-display-kpi text-display-kpi text-primary tracking-tight">
+                            {avgConfidence}
+                        </span>
                     </div>
-                    <div className="mt-2">
-                        <div className="flex items-center justify-between font-body-sm text-body-sm text-secondary mb-1">
-                            <span>Progress</span>
-                            <span>94.3%</span>
-                        </div>
-                        <div className="w-full h-1.5 bg-surface-container rounded-full overflow-hidden">
-                            <div
-                                className="h-full bg-primary rounded-full transition-all duration-1000 ease-out"
-                                style={{ width: '94.3%' }}
-                            />
-                        </div>
-                    </div>
+                    <p className="font-body-sm text-body-sm text-secondary mt-1 flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[14px] text-secondary">
+                            verified
+                        </span>
+                        Mean model R² score
+                    </p>
                 </div>
             </div>
 
-            <div className="border border-outline-variant rounded-xl p-6 bg-surface-container-lowest card-hover-glow">
-                <div className="chart-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-outline-variant">
+            {/* Chart + Latest Prediction Panel */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2 border border-outline-variant rounded-xl p-6 bg-surface-container-lowest card-hover-glow">
+                    <div className="chart-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-outline-variant">
+                        <div>
+                            <h3 className="font-headline-sm text-headline-sm font-semibold text-primary">
+                                Consumption Overview
+                            </h3>
+                            <p className="font-body-sm text-body-sm text-secondary mt-0.5 flex items-center gap-1">
+                                <span className="material-symbols-outlined text-[14px] text-secondary">
+                                    graphic_eq
+                                </span>
+                                {timeRange === 'daily'
+                                    ? '24h'
+                                    : timeRange === 'weekly'
+                                        ? '7 days'
+                                        : '4 weeks'}{' '}
+                                telemetry tracking
+                            </p>
+                        </div>
+                        <div className="flex items-center gap-3 flex-wrap">
+                            <div className="filter-chip-row flex p-0.5 rounded-lg border border-outline-variant bg-surface-container-low">
+                                {['daily', 'weekly', 'monthly'].map((range) => (
+                                    <button
+                                        key={range}
+                                        className={`px-3 py-1 text-xs font-medium rounded transition-all duration-200 ${
+                                            timeRange === range
+                                                ? 'bg-surface-container-lowest text-primary shadow-sm'
+                                                : 'text-secondary hover:text-primary hover:bg-surface-container-low/50'
+                                        }`}
+                                        onClick={() => setTimeRange(range)}
+                                    >
+                                        {range.charAt(0).toUpperCase() + range.slice(1)}
+                                    </button>
+                                ))}
+                            </div>
+                            <div className="flex items-center gap-2 text-secondary font-body-sm text-body-sm">
+                                <span className="material-symbols-outlined text-[16px]">info</span>
+                                <span>Live</span>
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="w-full h-72 mt-4">
+                        <ModernChart
+                            data={currentChartData}
+                            height={250}
+                            showForecast={timeRange === 'daily'}
+                            showGradient={true}
+                            showPoints={true}
+                            color="#000000"
+                            forecastColor="#71717a"
+                        />
+                    </div>
+                </div>
+
+                {/* Latest Prediction Panel */}
+                <div className="lg:col-span-1 border border-outline-variant rounded-xl p-6 bg-surface-container-lowest flex flex-col justify-between card-hover-glow">
                     <div>
-                        <h3 className="font-headline-sm text-headline-sm font-semibold text-primary">Consumption Overview</h3>
-                        <p className="font-body-sm text-body-sm text-secondary mt-0.5 flex items-center gap-1">
-                            <span className="material-symbols-outlined text-[14px] text-secondary">graphic_eq</span>
-                            {timeRange === 'daily' ? '24h' : timeRange === 'weekly' ? '7 days' : '4 weeks'} telemetry tracking
-                        </p>
-                    </div>
-                    <div className="flex items-center gap-3 flex-wrap">
-                        <div className="filter-chip-row flex p-0.5 rounded-lg border border-outline-variant bg-surface-container-low">
-                            {['daily', 'weekly', 'monthly'].map((range) => (
-                                <button
-                                    key={range}
-                                    className={`px-3 py-1 text-xs font-medium rounded transition-all duration-200 ${
-                                        timeRange === range
-                                            ? 'bg-surface-container-lowest text-primary shadow-sm'
-                                            : 'text-secondary hover:text-primary hover:bg-surface-container-low/50'
-                                    }`}
-                                    onClick={() => setTimeRange(range)}
-                                >
-                                    {range.charAt(0).toUpperCase() + range.slice(1)}
-                                </button>
-                            ))}
+                        <div className="flex items-center justify-between mb-3">
+                            <span className="font-label-sm text-label-sm text-secondary uppercase tracking-wider">
+                                Latest Prediction
+                            </span>
+                            <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                Live
+                            </span>
                         </div>
-                        <div className="flex items-center gap-2 text-secondary font-body-sm text-body-sm">
-                            <span className="material-symbols-outlined text-[16px]">info</span>
-                            <span>Live</span>
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                        </div>
+
+                        {livePrediction ? (
+                            <>
+                                <div className="font-display-kpi text-display-kpi text-primary tracking-tight">
+                                    {Number(livePrediction.predictedConsumptionKwh).toFixed(4)}
+                                    <span className="font-headline-sm text-headline-sm text-secondary font-normal ml-2">
+                                        kWh
+                                    </span>
+                                </div>
+                                <p className="font-body-sm text-body-sm text-secondary mt-1">
+                                    {livePrediction.district}
+                                    {livePrediction.province
+                                        ? `, ${livePrediction.province}`
+                                        : ''}
+                                </p>
+
+                                <div className="space-y-2.5 pt-4 mt-4 border-t border-outline-variant/40">
+                                    <div className="flex items-center justify-between font-label-sm text-label-sm">
+                                        <span className="text-secondary">Estimated Cost</span>
+                                        <span className="font-semibold text-emerald-600">
+                                            LKR{' '}
+                                            {Number(livePrediction.estimatedCost).toFixed(2)}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center justify-between font-label-sm text-label-sm">
+                                        <span className="text-secondary">Model</span>
+                                        <span className="font-semibold text-primary">
+                                            {livePrediction.selectedModel || '—'}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center justify-between font-label-sm text-label-sm">
+                                        <span className="text-secondary">Confidence (R²)</span>
+                                        <span className="font-semibold text-primary">
+                                            {Number(livePrediction.confidenceR2).toFixed(4)}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center justify-between font-label-sm text-label-sm">
+                                        <span className="text-secondary">Monthly Est.</span>
+                                        <span className="font-semibold text-primary">
+                                            {Number(
+                                                livePrediction.monthlyPredictedConsumptionKwh
+                                            ).toFixed(2)}{' '}
+                                            kWh
+                                        </span>
+                                    </div>
+                                    <div className="pt-2 mt-2 border-t border-outline-variant/40">
+                                        <div className="flex items-center justify-between font-label-sm text-label-sm mb-1">
+                                            <span className="text-secondary">
+                                                Monthly Progress
+                                            </span>
+                                            <span className="font-semibold text-primary">
+                                                {monthlyProgress.toFixed(1)}%
+                                            </span>
+                                        </div>
+                                        <div className="w-full h-1.5 bg-surface-container rounded-full overflow-hidden">
+                                            <div
+                                                className="h-full bg-primary rounded-full transition-all duration-1000 ease-out"
+                                                style={{ width: `${monthlyProgress}%` }}
+                                            />
+                                        </div>
+                                        <p className="font-body-sm text-body-sm text-secondary mt-1">
+                                            Target: {monthlyTarget} kWh
+                                        </p>
+                                    </div>
+                                </div>
+                            </>
+                        ) : (
+                            <div className="text-center py-8">
+                                <span className="material-symbols-outlined text-[48px] text-secondary/40">
+                                    online_prediction
+                                </span>
+                                <p className="font-body-sm text-body-sm text-secondary mt-3">
+                                    No predictions yet. Run your first forecast.
+                                </p>
+                            </div>
+                        )}
                     </div>
-                </div>
-                <div className="w-full h-72 mt-4">
-                    <ModernChart
-                        data={currentChartData}
-                        height={250}
-                        showForecast={timeRange === 'daily'}
-                        showGradient={true}
-                        showPoints={true}
-                        color="#000000"
-                        forecastColor="#71717a"
-                    />
+
+                    <div className="mt-4 pt-3 border-t border-outline-variant/40">
+                        <button
+                            onClick={() => onNavigate?.('predictions')}
+                            className="btn-premium w-full py-2 px-3 rounded-lg bg-primary text-on-primary text-xs font-medium hover:bg-primary-container transition-colors flex items-center justify-center gap-1.5"
+                        >
+                            <span className="material-symbols-outlined text-sm">auto_mode</span>
+                            <span>Run New Prediction</span>
+                        </button>
+                    </div>
                 </div>
             </div>
+
+            {/* Recent Prediction History preview */}
+            {history.length > 0 && (
+                <div className="border border-outline-variant rounded-xl p-6 bg-surface-container-lowest card-hover-glow">
+                    <div className="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 className="font-headline-sm text-headline-sm font-semibold text-primary">
+                                Recent Predictions
+                            </h3>
+                            <p className="font-body-sm text-body-sm text-secondary mt-0.5">
+                                Your latest forecast entries
+                            </p>
+                        </div>
+                        <button
+                            onClick={() => onNavigate?.('prediction-history')}
+                            className="h-8 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-primary font-label-sm text-label-sm font-medium hover:bg-surface-container-low transition-colors inline-flex items-center gap-1.5"
+                        >
+                            View All
+                            <span className="material-symbols-outlined text-[16px]">
+                                arrow_forward
+                            </span>
+                        </button>
+                    </div>
+
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left">
+                            <thead className="border-b border-outline-variant">
+                            <tr>
+                                <th className="py-2.5 px-3 font-label-sm text-label-sm text-secondary uppercase tracking-wider">
+                                    Date
+                                </th>
+                                <th className="py-2.5 px-3 font-label-sm text-label-sm text-secondary uppercase tracking-wider">
+                                    Location
+                                </th>
+                                <th className="py-2.5 px-3 font-label-sm text-label-sm text-secondary uppercase tracking-wider">
+                                    Predicted
+                                </th>
+                                <th className="py-2.5 px-3 font-label-sm text-label-sm text-secondary uppercase tracking-wider">
+                                    Cost (LKR)
+                                </th>
+                                <th className="py-2.5 px-3 font-label-sm text-label-sm text-secondary uppercase tracking-wider">
+                                    R²
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody className="divide-y divide-outline-variant">
+                            {history.slice(0, 5).map((item) => (
+                                <tr
+                                    key={item.id}
+                                    className="hover:bg-surface-container-low/50 transition-colors"
+                                >
+                                    <td className="py-2.5 px-3 font-body-sm text-body-sm text-primary whitespace-nowrap">
+                                        {new Date(item.createdAt).toLocaleDateString(
+                                            'en-GB',
+                                            {
+                                                day: '2-digit',
+                                                month: 'short',
+                                                year: 'numeric',
+                                            }
+                                        )}
+                                    </td>
+                                    <td className="py-2.5 px-3 font-body-sm text-body-sm text-secondary">
+                                        {item.district || '—'}
+                                    </td>
+                                    <td className="py-2.5 px-3 font-body-sm text-body-sm font-semibold text-primary whitespace-nowrap">
+                                        {Number(item.predictedConsumptionKwh).toFixed(4)} kWh
+                                    </td>
+                                    <td className="py-2.5 px-3 font-body-sm text-body-sm text-primary whitespace-nowrap">
+                                        {Number(item.estimatedCost).toFixed(2)}
+                                    </td>
+                                    <td className="py-2.5 px-3">
+                                            <span
+                                                className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
+                                                    Number(item.confidenceR2) >= 0.85
+                                                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                                        : 'bg-amber-50 text-amber-700 border border-amber-200'
+                                                }`}
+                                            >
+                                                {(
+                                                    Number(item.confidenceR2) * 100
+                                                ).toFixed(2)}
+                                                %
+                                            </span>
+                                    </td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            )}
         </>
     );
 };

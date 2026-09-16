@@ -1043,3 +1043,95 @@
     background: transparent;
     border: none;
 }
+/* ============================================
+   DASHBOARD PAGE HEADER ADJUSTMENT
+   Ensures correct visual hierarchy when the
+   top header contains the live clock.
+   ============================================ */
+.dashboard-top-header {
+    min-height: 4rem;
+}
+
+/* ============================================
+   LIVE CLOCK PILL
+   Slight hover accent for the date/time chip.
+   ============================================ */
+.dashboard-top-header .dashboard-header-meta > div {
+    transition: background-color 0.2s ease;
+}
+
+.dashboard-top-header .dashboard-header-meta > div:hover {
+    background-color: #f4f4f5;
+}
+
+/* ============================================
+   DASHBOARD SIDEBAR RESPONSIVE BEHAVIOR
+   Ensures sidebar is always visible on desktop
+   and slides in on mobile.
+   ============================================ */
+.dashboard-sidebar {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateX(-100%);
+}
+
+@media (min-width: 768px) {
+    .dashboard-sidebar {
+        transform: translateX(0);
+    }
+}
+
+.dashboard-sidebar.is-open {
+    transform: translateX(0);
+}
+
+/* Main content offset — only on desktop */
+@media (min-width: 768px) {
+    .dashboard-main {
+        margin-left: 16rem; /* 64 * 0.25rem */
+    }
+}
+
+@media (max-width: 767px) {
+    .dashboard-main {
+        margin-left: 0;
+    }
+
+    .dashboard-mobile-toggle {
+        display: inline-flex !important;
+    }
+}
+/* ============================================
+   DASHBOARD RESPONSIVE LAYOUT
+   Ensures the sidebar is always visible on
+   desktop and slides in as a drawer on mobile.
+   ============================================ */
+.dashboard-sidebar {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateX(-100%);
+}
+
+@media (min-width: 768px) {
+    .dashboard-sidebar {
+        transform: translateX(0);
+    }
+}
+
+.dashboard-sidebar.is-open {
+    transform: translateX(0);
+}
+
+@media (min-width: 768px) {
+    .dashboard-main {
+        margin-left: 16rem;
+    }
+}
+
+@media (max-width: 767px) {
+    .dashboard-main {
+        margin-left: 0;
+    }
+
+    .dashboard-mobile-toggle {
+        display: inline-flex !important;
+    }
+}
