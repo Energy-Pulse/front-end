@@ -35,7 +35,7 @@ export const Header = ({
                     </div>
                     <div className="header-brand-text flex flex-col">
             <span className="font-headline-sm text-headline-sm font-semibold tracking-tight text-primary leading-none">
-              SmartEnergy AI
+              EnergyPulse
             </span>
                         <span className="header-brand-tagline font-label-sm text-label-sm text-secondary font-medium tracking-wider">
               PRECISION TELEMETRY

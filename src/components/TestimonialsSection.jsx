@@ -7,7 +7,7 @@ const testimonialsData = [
         role: 'Property Manager',
         company: 'GreenLeaf Apartments',
         image: 'https://ui-avatars.com/api/?name=Sarah+Chen&background=000000&color=fff&size=60',
-        quote: 'SmartEnergy AI reduced our building\'s energy costs by 23% in the first quarter. The ML predictions are incredibly accurate — we\'ve eliminated peak demand charges entirely.',
+        quote: 'EnergyPulse reduced our building\'s energy costs by 23% in the first quarter. The ML predictions are incredibly accurate — we\'ve eliminated peak demand charges entirely.',
         rating: 5,
     },
     {
@@ -16,7 +16,7 @@ const testimonialsData = [
         role: 'CTO',
         company: 'EcoTech Solutions',
         image: 'https://ui-avatars.com/api/?name=Michael+Torres&background=5d5e66&color=fff&size=60',
-        quote: 'The telemetry precision is unmatched. We\'re using SmartEnergy AI to optimize our EV charging network, and the ROI has been phenomenal.',
+        quote: 'The telemetry precision is unmatched. We\'re using EnergyPulse to optimize our EV charging network, and the ROI has been phenomenal.',
         rating: 5,
     },
     {
@@ -43,7 +43,7 @@ export const TestimonialsSection = () => {
                         <span className="gradient-text-accent">are saying</span>
                     </h2>
                     <p className="font-body-md text-body-md text-secondary">
-                        Hear from real users who transformed their energy management with SmartEnergy AI.
+                        Hear from real users who transformed their energy management with EnergyPulse.
                     </p>
                 </div>
                 <div className="testimonials-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

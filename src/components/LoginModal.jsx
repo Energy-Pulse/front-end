@@ -43,11 +43,11 @@ export const LoginModal = ({ isOpen, onClose, onSwitchToRegister, onLogin }) => 
                     </span>
                 </div>
                 <span className="font-headline-sm text-headline-sm font-semibold text-primary">
-                    SmartEnergy AI
+                    EnergyPulse
                 </span>
             </div>
             <h3 className="font-headline-md text-headline-md font-bold text-primary mt-3">
-                Sign in to SmartEnergy AI
+                Sign in to EnergyPulse
             </h3>
             <p className="font-body-sm text-body-sm text-secondary mt-1 mb-6">
                 Enter your credentials to access precision telemetry.

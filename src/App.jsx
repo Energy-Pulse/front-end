@@ -89,7 +89,7 @@ const AppContent = () => {
                     />
                     <footer className="relative z-10 mt-auto border-t border-outline-variant/30 glass-image py-12">
                         <div className="footer-content max-w-7xl mx-auto px-6 text-center font-body-sm text-body-sm text-secondary">
-                            <p>© 2026 SmartEnergy AI Inc. All rights reserved.</p>
+                            <p>© 2026 EnergyPulse Inc. All rights reserved.</p>
                         </div>
                     </footer>
                 </>

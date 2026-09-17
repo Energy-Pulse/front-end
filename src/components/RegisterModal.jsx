@@ -84,11 +84,11 @@ export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, onRegister }) 
                     </span>
                 </div>
                 <span className="font-headline-sm text-headline-sm font-semibold text-primary">
-                    SmartEnergy AI
+                    EnergyPulse
                 </span>
             </div>
             <h3 className="font-headline-md text-headline-md font-bold text-primary mt-3">
-                Create your SmartEnergy AI account
+                Create your EnergyPulse account
             </h3>
             <p className="font-body-sm text-body-sm text-secondary mt-1 mb-6">
                 Start your 14-day free trial with full ML forecasting.
@@ -206,7 +206,7 @@ export const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, onRegister }) 
                         required
                     />
                     <label className="font-body-sm text-body-sm text-secondary cursor-pointer leading-tight" htmlFor="register-terms-modal">
-                        I agree to the <a className="text-primary underline" href="#">Terms of Service</a> and allow SmartEnergy AI to ingest smart meter telemetry.
+                        I agree to the <a className="text-primary underline" href="#">Terms of Service</a> and allow EnergyPulse to ingest smart meter telemetry.
                     </label>
                 </div>
 

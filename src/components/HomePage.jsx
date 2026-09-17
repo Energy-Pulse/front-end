@@ -95,7 +95,7 @@ export const HomePage = ({ onNavigate }) => {
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-outline-variant/40 bg-surface-container-low/80 backdrop-blur-sm mb-6">
                             <span className="pulse-dot online" />
                             <span className="hero-badge-text font-label-sm text-label-sm text-secondary tracking-wider uppercase font-semibold">
-                SMARTENERGY AI v1.2 — PRECISION HOUSEHOLD TELEMETRY &amp; ML FORECASTING
+                EnergyPulse v1.2 — PRECISION HOUSEHOLD TELEMETRY &amp; ML FORECASTING
               </span>
                         </div>
 
@@ -154,7 +154,7 @@ export const HomePage = ({ onNavigate }) => {
                                 <div className="w-2.5 h-2.5 rounded-full bg-outline-variant" />
                                 <div className="w-2.5 h-2.5 rounded-full bg-outline-variant" />
                                 <span className="hero-preview-title ml-2 font-label-sm text-label-sm text-secondary font-medium">
-                  SmartEnergy AI Telemetry Node // Primary Residence (Live Feed)
+                  EnergyPulse Telemetry Node // Primary Residence (Live Feed)
                 </span>
                             </div>
                             <div className="flex items-center gap-2">

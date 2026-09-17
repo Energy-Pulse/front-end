@@ -96,7 +96,7 @@ export const ContactSection = () => {
                                         name="subject"
                                         value={formData.subject}
                                         onChange={handleChange}
-                                        placeholder="Inquiry about SmartEnergy AI"
+                                        placeholder="Inquiry about EnergyPulse"
                                         required
                                         className="w-full h-10 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-primary font-body-sm text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition"
                                     />
@@ -151,7 +151,7 @@ export const ContactSection = () => {
                             <div className="space-y-3">
                                 <div className="flex items-center gap-3">
                                     <span className="material-symbols-outlined text-primary">email</span>
-                                    <span className="font-body-md text-body-md text-secondary">hello@smartenergy.ai</span>
+                                    <span className="font-body-md text-body-md text-secondary">hello@EnergyPulse.com</span>
                                 </div>
                                 <div className="flex items-center gap-3">
                                     <span className="material-symbols-outlined text-primary">phone</span>

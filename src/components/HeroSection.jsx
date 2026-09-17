@@ -24,7 +24,7 @@ export const HeroSection = ({ onShowRegisterModal, onShowDashboard }) => {
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-outline-variant/40 bg-surface-container-low/80 backdrop-blur-sm mb-6">
                         <span className="pulse-dot online" />
                         <span className="hero-badge-text font-label-sm text-label-sm text-secondary tracking-wider uppercase font-semibold">
-              SMARTENERGY AI v1.2 — PRECISION TELEMETRY
+              EnergyPulse AI v1.2 — PRECISION TELEMETRY
             </span>
                     </div>
                     <h1 className="hero-heading font-headline-lg text-headline-lg md:text-[44px] font-bold tracking-tight mb-4">
@@ -76,7 +76,7 @@ export const HeroSection = ({ onShowRegisterModal, onShowDashboard }) => {
                             <div className="w-2.5 h-2.5 rounded-full bg-outline-variant" />
                             <div className="w-2.5 h-2.5 rounded-full bg-outline-variant" />
                             <span className="hero-preview-title ml-2 font-label-sm text-label-sm text-secondary font-medium">
-                SmartEnergy AI Telemetry Node // Live Feed
+                EnergyPulse Telemetry Node // Live Feed
               </span>
                         </div>
                         <div className="flex items-center gap-2">

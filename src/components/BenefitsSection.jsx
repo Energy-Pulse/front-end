@@ -36,7 +36,7 @@ export const BenefitsSection = () => {
             <div className="max-w-7xl mx-auto px-6">
                 <div className="max-w-2xl mb-14">
           <span className="font-label-sm text-label-sm text-secondary uppercase tracking-wider font-semibold">
-            Why SmartEnergy AI
+            Why EnergyPulse
           </span>
                     <h2 className="font-headline-lg text-headline-lg font-bold text-primary mt-1 mb-3">
                         <span className="gradient-text">The benefits</span> of intelligent{' '}

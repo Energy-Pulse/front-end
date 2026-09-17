@@ -7,7 +7,7 @@ export const AboutSection = () => {
                 <div className="about-grid grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                     <div>
             <span className="font-label-sm text-label-sm text-secondary uppercase tracking-wider font-semibold">
-              About SmartEnergy AI
+              About EnergyPulse
             </span>
                         <h2 className="font-headline-lg text-headline-lg font-bold text-primary mt-2 mb-4">
                             <span className="gradient-text">Built for the</span>{' '}
@@ -15,7 +15,7 @@ export const AboutSection = () => {
                             <span className="gradient-text">of energy management</span>
                         </h2>
                         <p className="font-body-lg text-body-lg text-secondary leading-relaxed mb-6">
-                            SmartEnergy AI was founded with a single mission: to democratize access to enterprise-grade
+                            EnergyPulse was founded with a single mission: to democratize access to enterprise-grade
                             energy intelligence. Our platform combines cutting-edge machine learning with real-time
                             telemetry to help households and businesses make data-driven decisions about their energy
                             consumption.
@@ -34,7 +34,7 @@ export const AboutSection = () => {
                                 <div className="font-label-sm text-label-sm text-secondary">Active Users</div>
                             </div>
                             <div>
-                                <div className="about-kpi font-display-kpi text-display-kpi text-primary tracking-tight gradient-text">98.1%</div>
+                                <div className="about-kpi font-display-kpi text-display-kpi text-primary tracking-tight gradient-text">94.2%</div>
                                 <div className="font-label-sm text-label-sm text-secondary">Accuracy Rate</div>
                             </div>
                         </div>

@@ -136,7 +136,7 @@ export const Dashboard = ({
                             </div>
                             <div className="sidebar-label-text">
                                 <h1 className="font-headline-sm text-headline-sm font-semibold text-primary tracking-tight">
-                                    SmartEnergy AI
+                                    EnergyPulse
                                 </h1>
                                 <p className="font-label-sm text-label-sm text-secondary font-medium">
                                     Precision Telemetry
@@ -588,10 +588,10 @@ const DashboardContent = ({
                                     <div className="flex items-center justify-between font-label-sm text-label-sm">
                                         <span className="text-secondary">Monthly Est.</span>
                                         <span className="font-semibold text-primary">
-                                            {Number(
+                                           LKR{' '} {Number(
                                                 livePrediction.monthlyPredictedConsumptionKwh
                                             ).toFixed(2)}{' '}
-                                            kWh
+
                                         </span>
                                     </div>
                                     <div className="pt-2 mt-2 border-t border-outline-variant/40">
