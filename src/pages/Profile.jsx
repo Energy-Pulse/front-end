@@ -118,8 +118,12 @@ export const Profile = ({ user: fallbackUser }) => {
                 {/* Profile Card */}
                 <div className="lg:col-span-1">
                     <div className="border border-outline-variant rounded-xl p-6 bg-surface-container-lowest text-center">
-                        <div className="w-24 h-24 rounded-full bg-surface-container mx-auto flex items-center justify-center text-4xl font-semibold text-primary border-4 border-outline-variant/30">
-                            {isLoading ? '…' : (formData.name || 'U').charAt(0)}
+                        <div className="w-24 h-24 rounded-full bg-surface-container mx-auto flex items-center justify-center overflow-hidden border-4 border-outline-variant/30">
+                            <img
+                                src="/profile-avatar.png"
+                                alt="User avatar"
+                                className="w-full h-full object-cover"
+                            />
                         </div>
                         <h3 className="font-headline-md text-headline-md font-semibold text-primary mt-4">
                             {isLoading ? 'Loading…' : formData.name || 'User'}
