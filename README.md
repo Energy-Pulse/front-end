@@ -1,8 +1,8 @@
-# SmartEnergy AI
+# Energypulse
 
 ## Household Electricity Consumption Prediction System
 
-SmartEnergy AI is a full-stack machine learning application that predicts **household electricity consumption in kilowatt-hours (kWh)** using historical consumption data and relevant time-based and environmental factors.
+EnergyPulse is a full-stack machine learning application that predicts **household electricity consumption in kilowatt-hours (kWh)** using historical consumption data and relevant time-based and environmental factors.
 
 The system provides users with consumption history, usage trends, and electricity consumption predictions through a web-based dashboard.
 
@@ -135,7 +135,7 @@ Provides information about the selected machine learning model and its evaluatio
 ## Project Structure
 
 ```text
-SmartEnergy-AI/
+EnergyPulse/
 │
 ├── frontend/
 ├── backend/
@@ -160,7 +160,7 @@ SmartEnergy-AI/
 
 ```bash
 git clone <repository-url>
-cd SmartEnergy-AI
+cd EnergyPulse
 ```
 
 ### Frontend
