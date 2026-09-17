@@ -614,7 +614,7 @@ export const Predictions = () => {
                                             Monthly Estimate
                                         </span>
                                         <span className="font-semibold text-primary">
-                                            {Number(result.monthlyKwh).toFixed(2)} kWh
+                                             LKR {Number(result.monthlyKwh).toFixed(2)}
                                         </span>
                                     </div>
 
