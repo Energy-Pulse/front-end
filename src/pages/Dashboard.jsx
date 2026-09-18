@@ -42,6 +42,8 @@ export const Dashboard = ({
 
     // Load latest prediction from history for the dashboard view
     useEffect(() => {
+        if (currentPage !== 'dashboard') return;
+
         const userId = localStorage.getItem('smartEnergyUserId');
         if (!userId) return;
         fetchPredictionHistory(userId)
@@ -52,12 +54,15 @@ export const Dashboard = ({
                     );
                     setLivePrediction(sorted[0]);
                     setHistory(sorted);
+                } else {
+                    setLivePrediction(null);
+                    setHistory([]);
                 }
             })
             .catch(() => {
                 /* silent fallback to mock metrics */
             });
-    }, []);
+    }, [currentPage]);
 
     const getHeaderInfo = () => {
         const pageMap = {
@@ -176,8 +181,12 @@ export const Dashboard = ({
                 <div className="pt-4 border-t border-outline-variant">
                     <div className="sidebar-footer-user flex items-center justify-between gap-2 px-2 py-2">
                         <div className="flex items-center gap-3 min-w-0 flex-1">
-                            <div className="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-primary font-semibold flex-shrink-0">
-                                {currentUser?.name?.charAt(0) || 'U'}
+                            <div className="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center overflow-hidden flex-shrink-0">
+                                <img
+                                    src="/profile-avatar.png"
+                                    alt="User avatar"
+                                    className="w-full h-full object-cover"
+                                />
                             </div>
                             <div className="sidebar-label-text min-w-0">
                                 <div className="font-label-md text-label-md font-semibold text-primary truncate">
@@ -362,13 +371,6 @@ const DashboardContent = ({
                     </p>
                 </div>
                 <div className="page-header-actions flex items-center gap-3">
-                    <button
-                        onClick={() => onNavigate?.('predictions')}
-                        className="h-9 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-primary font-label-md text-label-md font-medium hover:bg-surface-container-low transition-colors inline-flex items-center gap-2 btn-premium"
-                    >
-                        <span className="material-symbols-outlined text-[18px]">download</span>
-                        Export
-                    </button>
                     <button
                         onClick={() => onNavigate?.('predictions')}
                         className="h-9 px-4 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-medium hover:bg-on-surface-variant transition-colors inline-flex items-center gap-2 shadow-sm btn-premium"
@@ -589,8 +591,8 @@ const DashboardContent = ({
                                         <span className="text-secondary">Monthly Est.</span>
                                         <span className="font-semibold text-primary">
                                            LKR{' '} {Number(
-                                                livePrediction.monthlyPredictedConsumptionKwh
-                                            ).toFixed(2)}{' '}
+                                            livePrediction.monthlyPredictedConsumptionKwh
+                                        ).toFixed(2)}{' '}
 
                                         </span>
                                     </div>
