@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useSection } from '../hooks/useSection';
 
 export const SectionWrapper = ({ id, children, className = '' }) => {
-    const { activeSection, registerSection } = useSection();
+    const { activeSection, registerSection } = useSection();//consume here
     const sectionRef = useRef(null);
 
     useEffect(() => {

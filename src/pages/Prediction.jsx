@@ -62,10 +62,10 @@ const DISTRICTS_BY_PROVINCE = {
 export const Predictions = () => {
     const [form, setForm] = useState(INITIAL_FORM);
     const [errors, setErrors] = useState({});
-    const [isRunning, setIsRunning] = useState(false);
+    const [isRunning, setIsRunning] = useState(false);//show loading state
     const [result, setResult] = useState(null);
 
-    // ✅ Simple error string for the UI banner
+    // Simple error string for the UI banner
     const [apiError, setApiError] = useState('');
 
     // Live "now" display — recomputes on every render
@@ -98,6 +98,7 @@ export const Predictions = () => {
     const handleToggle = (name) => {
         setForm((prev) => ({ ...prev, [name]: prev[name] ? 0 : 1 }));
     };
+
 
     const validate = () => {
         const errs = {};
@@ -152,7 +153,7 @@ export const Predictions = () => {
         setIsRunning(true);
         setResult(null);
 
-        // ✅ date/time captured here — uses current moment
+        //  date/time captured here — uses current moment
         const payload = {
             date: todayISO(),
             time: nowHHMM(),

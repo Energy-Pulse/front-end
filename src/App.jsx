@@ -13,7 +13,7 @@ const AppContent = () => {
     const [showLoginModal, setShowLoginModal] = useState(false);
     const [showRegisterModal, setShowRegisterModal] = useState(false);
     const [showDashboard, setShowDashboard] = useState(false);
-    const [currentPage, setCurrentPage] = useState('dashboard');
+    const [currentPage, setCurrentPage] = useState('dashboard');//Navigate to dashboard
     const [user, setUser] = useState(null);
     const { scrollToSection } = useSection();
 
@@ -22,10 +22,10 @@ const AppContent = () => {
 
     const handleNavigate = (page) => setCurrentPage(page);
 
-    // Just navigates back to landing — does NOT clear auth
+    // Just navigates back to landing  does NOT clear auth
     const handleBackToHome = () => setShowDashboard(false);
 
-    // Real logout — clears localStorage, resets state, goes home
+    // Real logout — clears localStorage resets state, goes home
     const handleLogout = () => {
         localStorage.removeItem('smartEnergyToken');
         localStorage.removeItem('smartEnergyUserId');

@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react';
-import { fetchUserDetails } from '../services/userApi';
+import {
+    fetchUserDetails,
+    updateUserDetails,
+    deleteUserAccount,
+} from '../services/userApi';
 import { ErrorMessage } from '../components/ErrorMessage.jsx';
 
 const formatDate = (iso) => {
@@ -15,23 +19,29 @@ const formatDate = (iso) => {
     }
 };
 
-export const Profile = ({ user: fallbackUser }) => {
+export const Profile = ({ user: fallbackUser, onLogout }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [isSaving, setIsSaving] = useState(false);
     const [apiError, setApiError] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    // Only fields that exist in the Swagger contract
     const [formData, setFormData] = useState({
         name: fallbackUser?.name || '',
-        email: fallbackUser?.email || '',
         username: '',
-        phone: '+1 (555) 123-4567',
-        role: 'Household Admin',
-        timezone: 'EST (UTC-5)',
+        email: fallbackUser?.email || '',
+        contact: '',
+    });
+
+    const [originalData, setOriginalData] = useState(null);
+    // Extra read-only info (not editable, fetched separately)
+    const [meta, setMeta] = useState({
+        memberSince: '',
         hvacType: '',
         householdOccupants: '',
-        memberSince: '',
-        notifications: true,
-        emailAlerts: true,
-        weeklyReports: true,
     });
 
     useEffect(() => {
@@ -46,15 +56,21 @@ export const Profile = ({ user: fallbackUser }) => {
                 setIsLoading(true);
                 setApiError('');
                 const data = await fetchUserDetails(userId);
-                setFormData((prev) => ({
-                    ...prev,
-                    name: data.name?.trim() || prev.name,
-                    email: data.email || prev.email,
+
+                const merged = {
+                    name: data.name?.trim() || fallbackUser?.name || '',
                     username: data.username || '',
+                    email: data.email || fallbackUser?.email || '',
+                    contact: data.contact || '',
+                };
+                setFormData(merged);
+                setOriginalData(merged);
+
+                setMeta({
+                    memberSince: formatDate(data.createdAt),
                     hvacType: data.hvacType || '',
                     householdOccupants: data.householdOccupants || '',
-                    memberSince: formatDate(data.createdAt),
-                }));
+                });
             } catch (err) {
                 console.error('[Profile] error:', err);
                 setApiError('Something went wrong. Please try again.');
@@ -62,18 +78,98 @@ export const Profile = ({ user: fallbackUser }) => {
                 setIsLoading(false);
             }
         })();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: type === 'checkbox' ? checked : value,
-        }));
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
+        const userId = localStorage.getItem('smartEnergyUserId');
+        if (!userId) return;
+
+        setIsSaving(true);
+        setApiError('');
+        setSuccessMessage('');
+
+        // Snapshot what the user actually typed — this is our source of truth
+        const submitted = {
+            name: formData.name,
+            username: formData.username,
+            email: formData.email,
+            contact: formData.contact,
+        };
+
+        try {
+            // Exactly the 4 fields Swagger expects
+            const payload = { ...submitted };
+
+            const updated = await updateUserDetails(userId, payload);
+
+            // The PUT endpoint returns `{}` per Swagger, so trust the values
+            // we just submitted. Only override with server values when the
+            // server actually returns a non-empty string.
+            const nextData = {
+                name:
+                    typeof updated?.name === 'string' && updated.name.trim() !== ''
+                        ? updated.name
+                        : submitted.name,
+                username:
+                    typeof updated?.username === 'string' &&
+                    updated.username.trim() !== ''
+                        ? updated.username
+                        : submitted.username,
+                email:
+                    typeof updated?.email === 'string' &&
+                    updated.email.trim() !== ''
+                        ? updated.email
+                        : submitted.email,
+                contact:
+                    typeof updated?.contact === 'string' &&
+                    updated.contact.trim() !== ''
+                        ? updated.contact
+                        : submitted.contact,
+            };
+
+            setFormData(nextData);
+            setOriginalData(nextData);
+            setIsEditing(false);
+            setSuccessMessage('Profile updated successfully.');
+            setTimeout(() => setSuccessMessage(''), 3000);
+        } catch (err) {
+            console.error('[Profile] save error:', err);
+            setApiError('Something went wrong. Please try again.');
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const handleCancel = () => {
+        if (originalData) setFormData(originalData);
         setIsEditing(false);
+        setApiError('');
+    };
+
+    const handleDeleteAccount = async () => {
+        const userId = localStorage.getItem('smartEnergyUserId');
+        if (!userId) return;
+
+        setIsDeleting(true);
+        setApiError('');
+
+        try {
+            await deleteUserAccount(userId);
+            localStorage.clear();
+            setShowDeleteConfirm(false);
+            if (onLogout) onLogout();
+            else window.location.href = '/';
+        } catch (err) {
+            console.error('[Profile] delete error:', err);
+            setApiError('Something went wrong. Please try again.');
+            setIsDeleting(false);
+        }
     };
 
     const roleLabel = 'Household Admin';
@@ -91,19 +187,37 @@ export const Profile = ({ user: fallbackUser }) => {
                     </p>
                 </div>
                 <div className="page-header-actions flex items-center gap-3">
-                    <button
-                        onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
-                        className={`h-9 px-4 rounded-lg font-label-md text-label-md font-medium inline-flex items-center gap-2 shadow-sm transition-colors ${
-                            isEditing
-                                ? 'bg-emerald-600 text-white hover:bg-emerald-700'
-                                : 'bg-primary text-on-primary hover:bg-on-surface-variant'
-                        }`}
-                    >
-                        <span className="material-symbols-outlined text-[18px]">
-                            {isEditing ? 'check' : 'edit'}
-                        </span>
-                        {isEditing ? 'Save Changes' : 'Edit Profile'}
-                    </button>
+                    {isEditing ? (
+                        <>
+                            <button
+                                onClick={handleCancel}
+                                disabled={isSaving}
+                                className="h-9 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-primary font-label-md text-label-md font-medium hover:bg-surface-container-low transition-colors disabled:opacity-60"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleSave}
+                                disabled={isSaving}
+                                className="h-9 px-4 rounded-lg font-label-md text-label-md font-medium inline-flex items-center gap-2 shadow-sm transition-colors bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-60"
+                            >
+                                <span className="material-symbols-outlined text-[18px]">
+                                    {isSaving ? 'progress_activity' : 'check'}
+                                </span>
+                                {isSaving ? 'Saving...' : 'Save Changes'}
+                            </button>
+                        </>
+                    ) : (
+                        <button
+                            onClick={() => setIsEditing(true)}
+                            className="h-9 px-4 rounded-lg font-label-md text-label-md font-medium inline-flex items-center gap-2 shadow-sm transition-colors bg-primary text-on-primary hover:bg-on-surface-variant"
+                        >
+                            <span className="material-symbols-outlined text-[18px]">
+                                edit
+                            </span>
+                            Edit Profile
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -112,6 +226,17 @@ export const Profile = ({ user: fallbackUser }) => {
                     message={apiError}
                     onDismiss={() => setApiError('')}
                 />
+            )}
+
+            {successMessage && (
+                <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center gap-2">
+                    <span className="material-symbols-outlined text-emerald-600 text-[18px]">
+                        check_circle
+                    </span>
+                    <span className="font-body-sm text-body-sm text-emerald-700">
+                        {successMessage}
+                    </span>
+                </div>
             )}
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -133,7 +258,7 @@ export const Profile = ({ user: fallbackUser }) => {
                         </p>
                         {formData.username && (
                             <p className="font-body-sm text-body-sm text-secondary mt-0.5">
-                                {formData.username}
+                                @{formData.username}
                             </p>
                         )}
 
@@ -148,22 +273,22 @@ export const Profile = ({ user: fallbackUser }) => {
                             <div className="flex items-center justify-between font-body-sm text-body-sm mt-2">
                                 <span className="text-secondary">Member Since</span>
                                 <span className="text-primary">
-                                    {formData.memberSince || '—'}
+                                    {meta.memberSince || '—'}
                                 </span>
                             </div>
                             <div className="flex items-center justify-between font-body-sm text-body-sm mt-2">
                                 <span className="text-secondary">Household</span>
                                 <span className="text-primary">
-                                    {formData.householdOccupants
-                                        ? `${formData.householdOccupants} occupants`
+                                    {meta.householdOccupants
+                                        ? `${meta.householdOccupants} occupants`
                                         : '—'}
                                 </span>
                             </div>
                             <div className="flex items-center justify-between font-body-sm text-body-sm mt-2">
                                 <span className="text-secondary">HVAC</span>
                                 <span className="text-primary capitalize">
-                                    {formData.hvacType
-                                        ? formData.hvacType.replace('-', ' ')
+                                    {meta.hvacType
+                                        ? meta.hvacType.replace('-', ' ')
                                         : '—'}
                                 </span>
                             </div>
@@ -171,13 +296,13 @@ export const Profile = ({ user: fallbackUser }) => {
                     </div>
                 </div>
 
-                {/* Settings Form */}
+                {/* Editable form — Swagger fields only */}
                 <div className="lg:col-span-2 space-y-4">
                     <div className="border border-outline-variant rounded-xl p-6 bg-surface-container-lowest">
                         <h4 className="font-headline-sm text-headline-sm font-semibold text-primary mb-4">
                             Personal Information
                         </h4>
-                        <div className="profile-info-grid grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label className="block font-label-sm text-label-sm font-medium text-secondary mb-1">
                                     Full Name
@@ -225,99 +350,20 @@ export const Profile = ({ user: fallbackUser }) => {
                             </div>
                             <div>
                                 <label className="block font-label-sm text-label-sm font-medium text-secondary mb-1">
-                                    Phone Number
+                                    Contact
                                 </label>
                                 <input
                                     type="text"
-                                    name="phone"
-                                    value={formData.phone}
+                                    name="contact"
+                                    value={formData.contact}
                                     onChange={handleChange}
                                     disabled={!isEditing}
+                                    placeholder="+94 77 123 4567"
                                     className={`w-full h-10 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-primary font-body-sm text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition ${
                                         !isEditing ? 'opacity-60 cursor-default' : ''
                                     }`}
                                 />
                             </div>
-                            <div>
-                                <label className="block font-label-sm text-label-sm font-medium text-secondary mb-1">
-                                    Timezone
-                                </label>
-                                <select
-                                    name="timezone"
-                                    value={formData.timezone}
-                                    onChange={handleChange}
-                                    disabled={!isEditing}
-                                    className={`w-full h-10 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-primary font-body-sm text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition ${
-                                        !isEditing ? 'opacity-60 cursor-default' : ''
-                                    }`}
-                                >
-                                    <option>EST (UTC-5)</option>
-                                    <option>CST (UTC-6)</option>
-                                    <option>MST (UTC-7)</option>
-                                    <option>PST (UTC-8)</option>
-                                    <option>IST (UTC+5:30)</option>
-                                    <option>SLST (UTC+5:30)</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="border border-outline-variant rounded-xl p-6 bg-surface-container-lowest">
-                        <h4 className="font-headline-sm text-headline-sm font-semibold text-primary mb-4">
-                            Notification Preferences
-                        </h4>
-                        <div className="space-y-3">
-                            {[
-                                {
-                                    key: 'notifications',
-                                    title: 'Push Notifications',
-                                    desc: 'Receive real-time alerts on your device',
-                                },
-                                {
-                                    key: 'emailAlerts',
-                                    title: 'Email Alerts',
-                                    desc: 'Weekly summaries and important updates',
-                                },
-                                {
-                                    key: 'weeklyReports',
-                                    title: 'Weekly Reports',
-                                    desc: 'Detailed consumption analysis every Monday',
-                                },
-                            ].map((item, idx, arr) => (
-                                <div
-                                    key={item.key}
-                                    className={`flex items-center justify-between py-2 gap-3 ${
-                                        idx < arr.length - 1
-                                            ? 'border-b border-outline-variant/40'
-                                            : ''
-                                    }`}
-                                >
-                                    <div>
-                                        <div className="font-label-md text-label-md font-medium text-primary">
-                                            {item.title}
-                                        </div>
-                                        <div className="font-body-sm text-body-sm text-secondary">
-                                            {item.desc}
-                                        </div>
-                                    </div>
-                                    <button
-                                        onClick={() =>
-                                            isEditing &&
-                                            setFormData((prev) => ({
-                                                ...prev,
-                                                [item.key]: !prev[item.key],
-                                            }))
-                                        }
-                                        className={`w-11 h-6 flex-shrink-0 flex items-center rounded-full p-1 transition-colors duration-200 ease-in-out ${
-                                            formData[item.key]
-                                                ? 'bg-primary justify-end'
-                                                : 'bg-outline-variant justify-start'
-                                        } ${!isEditing ? 'opacity-50 cursor-default' : ''}`}
-                                    >
-                                        <span className="w-4 h-4 rounded-full bg-white shadow-md transform transition-transform" />
-                                    </button>
-                                </div>
-                            ))}
                         </div>
                     </div>
 
@@ -326,16 +372,13 @@ export const Profile = ({ user: fallbackUser }) => {
                             Account Security
                         </h4>
                         <p className="font-body-sm text-body-sm text-secondary mb-4">
-                            Manage your password and security settings
+                            Permanently remove your account and all associated data.
                         </p>
                         <div className="flex flex-wrap gap-3">
-                            <button className="px-4 py-2 rounded-lg border border-outline-variant text-primary font-label-md text-label-md font-medium hover:bg-surface-container-low transition-colors inline-flex items-center gap-2">
-                                <span className="material-symbols-outlined text-[18px]">
-                                    lock
-                                </span>
-                                Change Password
-                            </button>
-                            <button className="px-4 py-2 rounded-lg border border-outline-variant text-red-600 font-label-md text-label-md font-medium hover:bg-red-50 transition-colors inline-flex items-center gap-2">
+                            <button
+                                onClick={() => setShowDeleteConfirm(true)}
+                                className="px-4 py-2 rounded-lg border border-outline-variant text-red-600 font-label-md text-label-md font-medium hover:bg-red-50 transition-colors inline-flex items-center gap-2"
+                            >
                                 <span className="material-symbols-outlined text-[18px]">
                                     delete_forever
                                 </span>
@@ -345,6 +388,56 @@ export const Profile = ({ user: fallbackUser }) => {
                     </div>
                 </div>
             </div>
+
+            {/* Delete Confirmation Modal */}
+            {showDeleteConfirm && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+                    <div className="w-full max-w-md bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-xl">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center flex-shrink-0">
+                                <span className="material-symbols-outlined text-red-600 text-[22px]">
+                                    warning
+                                </span>
+                            </div>
+                            <div>
+                                <h3 className="font-headline-sm text-headline-sm font-semibold text-primary">
+                                    Delete Account?
+                                </h3>
+                                <p className="font-body-sm text-body-sm text-secondary">
+                                    This action cannot be undone.
+                                </p>
+                            </div>
+                        </div>
+
+                        <p className="font-body-sm text-body-sm text-secondary mb-6">
+                            All your prediction history, profile data, and account
+                            information will be permanently removed.
+                        </p>
+
+                        <div className="flex justify-end gap-3">
+                            <button
+                                onClick={() => setShowDeleteConfirm(false)}
+                                disabled={isDeleting}
+                                className="h-9 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-primary font-label-md text-label-md font-medium hover:bg-surface-container-low transition-colors disabled:opacity-60"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleDeleteAccount}
+                                disabled={isDeleting}
+                                className="h-9 px-4 rounded-lg bg-red-600 text-white font-label-md text-label-md font-medium hover:bg-red-700 transition-colors inline-flex items-center gap-2 disabled:opacity-60"
+                            >
+                                <span className="material-symbols-outlined text-[18px]">
+                                    {isDeleting
+                                        ? 'progress_activity'
+                                        : 'delete_forever'}
+                                </span>
+                                {isDeleting ? 'Deleting...' : 'Delete Account'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
